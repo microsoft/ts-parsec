@@ -5,9 +5,9 @@
 // tslint:disable:trailing-comma
 
 import * as assert from 'assert';
-import { Token } from '../src/index';
-import { buildLexer, expectEOF, expectSingleResult, rule } from '../src/index';
-import { alt, apply, kmid, lrec_sc, seq, str, tok } from '../src/index';
+import { Token } from 'ts-parsec';
+import { buildLexer, expectEOF, expectSingleResult, rule } from 'ts-parsec';
+import { alt, apply, kmid, lrec_sc, seq, str, tok } from 'ts-parsec';
 
 enum TokenKind {
     Number,

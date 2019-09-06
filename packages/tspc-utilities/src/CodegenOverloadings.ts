@@ -67,12 +67,12 @@ ${
 
 const overloadingCount = +process.argv[2];
 
-replaceCodegenContent(path.join(__dirname, '../../src/Parsers/AlternativeParser.ts'), `${
+replaceCodegenContent(path.join(__dirname, '../../ts-parsec/src/Parsers/AlternativeParser.ts'), `${
   getNumbers(2, overloadingCount).map(generateAlt).join(os.EOL)
   }
 `);
 
-replaceCodegenContent(path.join(__dirname, '../../src/Parsers/SequencialParser.ts'), `${
+replaceCodegenContent(path.join(__dirname, '../../ts-parsec/src/Parsers/SequencialParser.ts'), `${
   getNumbers(2, overloadingCount).map(generateSeq).join(os.EOL)
   }
 `);
