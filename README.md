@@ -1,14 +1,5 @@
 # ts-parsec
 
-TypeScript Code Generation for React Native Turbo Module
-
-- Index
-  - Contributing
-  - Building this repo
-  - Packages
-  - Deploying
-  - Development
-
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
