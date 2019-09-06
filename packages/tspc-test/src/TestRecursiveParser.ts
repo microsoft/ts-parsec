@@ -5,9 +5,9 @@
 // tslint:disable:trailing-comma
 
 import * as assert from 'assert';
-import { Token } from 'ts-parsec';
-import { buildLexer, expectEOF, expectSingleResult, rule } from 'ts-parsec';
-import { alt, apply, kmid, lrec_sc, seq, str, tok } from 'ts-parsec';
+import { Token } from 'typescript-parsec';
+import { buildLexer, expectEOF, expectSingleResult, rule } from 'typescript-parsec';
+import { alt, apply, kmid, lrec_sc, seq, str, tok } from 'typescript-parsec';
 
 enum TokenKind {
     Number,

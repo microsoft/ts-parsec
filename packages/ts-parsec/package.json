@@ -1,5 +1,5 @@
 {
-  "name": "ts-parsec",
+  "name": "typescript-parsec",
   "version": "0.1.0",
   "description": "TypeScript Parser Combinator",
   "private": false,

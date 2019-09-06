@@ -3,8 +3,8 @@
 ts-parsec is a parser combinator library prepared for typescript. By using this library, you are able to create parsers very quickly using just a few lines of code. For document and more information, please checkout our [repo on github](https://github.com/microsoft/ts-parsec).
 
 ```typescript
-import { buildLexer, expectEOF, expectSingleResult, rule, Token } from 'ts-parsec';
-import { alt, apply, kmid, lrec_sc, seq, str, tok } from 'ts-parsec';
+import { buildLexer, expectEOF, expectSingleResult, rule, Token } from 'typescript-parsec';
+import { alt, apply, kmid, lrec_sc, seq, str, tok } from 'typescript-parsec';
 
 enum TokenKind {
     Number,
