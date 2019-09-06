@@ -1,0 +1,21 @@
+{
+  "name": "tslint-shared",
+  "version": "1.0.0",
+  "description": "Shared tslint rules",
+  "main": "tslint-export.json",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/microsoft/react-native-tscodegen.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/microsoft/react-native-tscodegen/issues"
+  },
+  "homepage": "https://github.com/microsoft/react-native-tscodegen#readme",
+  "devDependencies": {
+    "tslint": "^5.18.0",
+    "typescript": "^3.5.3",
+    "tslint-microsoft-contrib": "^6.2.0"
+  }
+}

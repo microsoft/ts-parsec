@@ -1,0 +1,14 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  PR:
+    name: Validation
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          submodules: true
+
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+      - run: yarn test
