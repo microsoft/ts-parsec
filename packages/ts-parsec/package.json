@@ -10,13 +10,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/microsoft/react-native-tscodegen.git"
+    "url": "git+https://github.com/microsoft/ts-parsec.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/microsoft/react-native-tscodegen/issues"
+    "url": "https://github.com/microsoft/ts-parsec/issues"
   },
-  "homepage": "https://github.com/microsoft/react-native-tscodegen#readme",
+  "homepage": "https://github.com/microsoft/ts-parsec#readme",
   "devDependencies": {
     "@types/jest": "^24.0.17",
     "@types/node": "^12.6.9",

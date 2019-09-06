@@ -1,4 +1,4 @@
-# react-native-tscodegen
+# ts-parsec
 
 TypeScript Code Generation for React Native Turbo Module
 
@@ -31,80 +31,244 @@ yarn build
 yarn test
 ```
 
-## Packages
+## Introduction
 
-### tslint-shared
+ts-parsec is a parser combinator for TypeScript. It provides the following features:
 
-This is the shared tslint configuration for all other packages.
+- **Tokenizer based on regular expressions**. This tokenizer is designed for convenience. For some cases its performance may be unsatisfying. In this case, you could write your own tokenizer. It is very easy to plug your tokenizer into ts-parsec.
+- **Parser combinators**.
+- The ability to support recursive syntax.
 
-### RN-TSCodegen
+You are recommended to learn [EBNF](https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form) before using this library.
 
-This is the TypeScript code generation for TurboModule in react native.
+## Getting Started
 
-In [facebook/react-native](https://github.com/facebook/react-native/), you are able to find following files in `packages/react-native-codegen/src`:
+There is a good example in `test/TestRecursiveParser.ts`. But here I have a much more simple example. For example, you want to parse a list of numbers like this:
 
-- [cli/parser/parser-cli.js](https://github.com/facebook/react-native/blob/master/packages/react-native-codegen/src/cli/parser/parser-cli.js): It calls `parseFiles` from
-- [cli/parser/parser.js](https://github.com/facebook/react-native/blob/master/packages/react-native-codegen/src/cli/parser/parser.js): It calls `parseFile` from
-- [parsers/flow/index.js](https://github.com/facebook/react-native/blob/master/packages/react-native-codegen/src/parsers/flow/index.js): It parse a Flow source file to `SchemaType`, which is defined in `CodegenSchema.js`
-- [RNCodegen.js](https://github.com/facebook/react-native/blob/master/packages/react-native-codegen/src/generators/RNCodegen.js): It converts `parseFile` result to header files.
+```plaintext
+123, 456.789, 0
+```
 
-RN-TSCodegen provides [typeScriptToCodeSchema](https://github.com/microsoft/react-native-tscodegen/blob/master/packages/RN-TSCodegen/src/index.ts) for the TypeScript version of `parseFile`.
+A number could be an integer or a decimal. Numbers are separated by commas. Spaces are ignored. So there are obviously 3 kinds of tokens:
 
-### RN-Codegen-Backend
+```typescript
+enum TokenKind {
+    Number,
+    Comma,
+    Space
+}
+```
 
-Compile Facebook's code and export `generate` from `RNCodegen.js`
+The easiest way to write a tokenizer is using regular expressions, so that you use `buildLexer` function.
 
-### RN-TSCodegen-Test
+```typescript
+const tokenizer = buildLexer([
+    [true, /^\d+(\.\d+)?/g, TokenKind.Number],
+    [true, /^\,/g, TokenKind.Comma],
+    [false, /^\s+/g, TokenKind.Space]
+]);
+```
 
-This package contains all test cases for RN-TSCodegen.
+Here `false` means that, after the tokenizer recognize this token, it is thrown away from the token stream. You don't read this token from the token stream.
 
-### ts-parsec
+Now, you need to define your parser:
 
-This is a [parser combinator](https://github.com/microsoft/react-native-tscodegen/tree/master/packages/ts-parsec) written in TypeScript. It allows you to create parsers very quickly. Please take a look at:
+```typescript
+const numberListParser = list_sc(tok(TokenKind.Number), str(','));
+```
 
-- [packages/ts-parsec/test/TestRecursiveParser.ts](https://github.com/microsoft/react-native-tscodegen/blob/master/packages/ts-parsec/test/TestRecursiveParser.ts)
-- [packages/minimum-flow-parser/src/Parser.ts](https://github.com/microsoft/react-native-tscodegen/blob/master/packages/minimum-flow-parser/src/Parser.ts)
+`list_sc` means that the parser will try to consume tokens as much as possible.
+If you use `list` instead of `list_sc`, you could get multiple results, which means, if you input `1,2,3`, you could get 3 results: `1`, `1,2`, `1,2,3.`.
+This is a very useful feature when you need to deal with some ambiguity inside a bigger parser, but we don't need it here.
 
-for deeper understanding of this library.
+But at this moment, `numberListParser` doesn't give you a number array, it gives you a structure that **topological equivalent** to the syntax you provided. You need one more step to convert it to a number array:
 
-### minimum-flow-parser
+```typescript
+const numberListParser = apply(
+    list_sc(tok(TokenKind.Number), str(',')),
+    (tokens: Token<TokenKind.Number>[]]) => {
+        return tokens.map((token: Token<TokenKind.Number>) => {
+            return +token.text;
+        });
+    });
+```
 
-This is a Flow parser, just enough to convert necessary files to TypeScript for this repo.
+`apply` means that, you are not satisfy with the direct result of the parser, you want to transform it to your favorite data structure. Here you need a number array.
 
-### update-test-files
+So let's try it!
 
-I started this repo in the days when Facebook is actively updating their react native code generation for Flow. There is no document or specification at this moment.
+```typescript
+const numberArray = expectSingleResult(expectEOF(numberListParser.parse(tokenizer.parse('123, 456.789, 0'))));
+```
 
-I need to develop a TypeScript version working exactly as their Flow code generation, and to track and catch up their progress when they are changing their code generation parallelly.
+Now you get: `[123, 456.789, 0]`!
 
-So I started update-test files. Whenever I need to know what is changed in their code, I run this package, and then I can:
+After calling `expectSingleResult(expectEOF(x))`, you choose the best result among multiple ones returned from the parser. If all tokens are not consumed, you will get an exception, with details about where goes wrong in your input.
 
-- Get the latest `CodegenSchema.js` converted to TypeScript automatically. RN-TSCodegen is written in TypeScript, so the definition of the intermediate format should be recognizable by TypeScript.
-- Get latest test cases. Facebook has prepared a set of Flow source files, along with snapshots showing how a `SchemaType` object should be created for each file. All test cases are automatically converted to TypeScript to be my test cases. At the early stage of the development, if RN-TSCodegen produces exactly the same output as theirs, I consider my code generation is correct.
-- Get the diff of generated files. In this way I can know how many features are added or removed. This is a very important guidance for the development of this project.
+Don't forget to import all of these symbols!
 
-Since minimum-flow-parser is built just for converting test cases, so it is possible that it fails to parse a Flow program because Facebook uses more Flow features in their test cases then the last time. It will be updated then.
+```typescript
+import {apply, buildLexer, expectEOF, expectSingleResult, list_sc, str, tok, Token} from 'ts-parsec';
+```
 
-## Deploying
+## Tokenizer
 
-At this moment, no effort of integrating RN-TSCodegen to facebook/react-native has been made.
-But I've got facebook's native code generator run successfully in RN-TSCodegen's [test cases](https://github.com/microsoft/react-native-tscodegen/blob/master/packages/RN-TSCodegen/test/TestE2ECases.ts).
-You can follow these test cases to make it run in your repo. There is several things that need to do before running this code generation:
+You could use `buildLexer` to create a tokenizer from regular expressions. If you want to write your own tokenizer, just create a linked list of `Token<T>` type. Usually `T` is the tag of tokens, just like `TokenKind` in the example.
 
-- Call `typeScriptToCodeSchema` from `RN-TSCodegen` followed by `generate` function from `RN-Codegen-Backend`.
-- In [this folder](https://github.com/microsoft/react-native-tscodegen/tree/master/packages/RN-TSCodegen-Test/src/lib) you will see 3 files. You either use them directly, or merge them into third-party description files.
-  - [CodegenTypes.ts](https://github.com/microsoft/react-native-tscodegen/blob/master/packages/RN-TSCodegen-Test/src/lib/CodegenTypes.ts)
-  - [ImageSource.ts](https://github.com/microsoft/react-native-tscodegen/blob/master/packages/RN-TSCodegen-Test/src/lib/ImageSource.ts)
-  - [StyleSheetTypes.ts](https://github.com/microsoft/react-native-tscodegen/blob/master/packages/RN-TSCodegen-Test/src/lib/StyleSheetTypes.ts)
-- `RNTag<T>` and `WithDefaultRNTag` that are used in above files are very important classes that help RN-TSCodegen recognize react native required features that TypeScript does not have. This approach may change in the future.
-- `ReactNull | T` is used to represent nullable types. This approach may change in the future.
-  - When `--strictNullChecks` is off (by default), TypeScript compiler will ignore `null` and `undefined` in a union type, because they are subtype of all other types. The currently implementation uses `typeChecker` in TypeScript Compiler API to do type inference, necessary information will be lost when `--strictNullChecks` is off.
+```typescript
+export interface Token<T> {
+    readonly kind: T;
+    readonly text: string;
+    readonly pos: TokenPosition;
+    readonly next: Token<T> | undefined;
+}
+```
 
-Today there is no npm package created for this repo. to use this source code, it is recommended to submodule and build this repo, and then import from the following packages directly:
+`pos` is very important. During parsing, parser combinator will hit many errors, because it is very common that a small part of the parser combinator find itself encounter an unexpected token. In this case, the parser combinator returns an error with `pos`. A bigger parser combinator will then turn to another choise (for example, in `alt`, or `list_sc`). If all choices are all failed, it compares all errors that is returned from these choices, and return one that has consumed the most tokens.
 
-- `RN-TSCodegen`
-- `RN-Codegen-Backend`
+When you write your own tokenizer, please take very carefully to generate `pos`. But if you use `buildLexer`, you just forget all of these details.
 
-## Development
+`buildLexer` consumes an array of a 3-element-tuple. Let's take a look at the example again:
 
-(editing)
+```typescript
+const tokenizer = buildLexer([
+    [true, /^\d+(\.\d+)?/g, TokenKind.Number],
+    [true, /^\,/g, TokenKind.Comma],
+    [false, /^\s+/g, TokenKind.Space]
+]);
+```
+
+There are 3 elements in each line. The first one indicates whether the tokenizer want to keep the token in the token stream or not. Here we don't care about spaces, so we set false. So that the token stream only has numbers and commas.
+
+It is very common possible that, multiple token definitions match the prefix of the input from a position. At this moment, `buildLexer` will pick the longest one. If there are still multiple longest tokens with the same size, `buildLexer` will pick one that appears eariler in the array passing to `buildLexer`.
+
+For example:
+
+```typescript
+const tokenizer = buildLexer([
+    [true, /^true/g, 0],
+    [true, /^\w+/g, 1],,
+    [false, /^\s+/g, 2]
+]);
+```
+
+If you gives `true trueLies`, 1st and 2nd both match `true`. But the 1st one appears eariler than the 2nd one in the array passing to `buildLexer`, so 1st wins.
+And then you get to `trueLies` after skipping a space, 1st and 2nd both match the prefix of the input again. But 1st matches `true`, 2nd matches `trueLies`, 2nd is longer, so 2nd wins.
+
+For some languages, like VB.NET, it has a context sensitive tokenizer. You could embed an XML in the code, while XML and VB.NET have two different sets of token definitions. `buildLexer` could not handle this case. If you have such need, you could:
+
+- Write a manual tokenizer.
+- Tell me and I add more features to the library for you.
+- Make a pull request!
+
+### NOTE
+
+`buildLexer` accepts regular expressions that in this form: `/^xxx/g`.
+
+## Parser Combinators
+
+You define a `LL parser` by `EBNF`, and then translate it using parser combinators. All parser combinators could return multiple results, except those ends with `_sc`, which means `short cut`.
+Short cut combinators returns the best result, even if it could fail the whole parser.
+You need to choose them wisely.
+
+At this moment, ts-parsec provides the following combinators:
+
+- `nil`: Consumes no token and returns `undefined`. When I say "it returns `undefined`", it doesn't mean the function returns undefined, it means that `returnValue.candidates[something].result === undefined`. In most of the cases, you don't need to deal with multiple results by yourself, this is why you want to call `exceptSingleResult` and `expectEOF`. They will be explained later.
+- `str('x')`: Consumes a token that is `'x'`.
+- `tok(x)`: Consumes a token whose `kind` is `x`. If you use `buildLexer`, these values of `x` is put in the 3rd place in each line.
+- `seq(a,b,c)`: Consumes tokens that matches `a`, `b` and then `c` in order. It returns a tuple, containing results from `a`, `b` and `c` in order. You could put 2-12 arguments in `seq`.
+- `alt(a,b,c)`: Consumes tokens that matches `a`, `b` or `c`. It returns a union type, which could be the result of `a`, `b` or `c`. If multiple parsers in `alt` matches, they are all returned. If non of them match, it fails. You could put 2-12 arguments in `alt`.
+- `apply(x, f)`: Consumes tokens that matches `x`, and if it succeeds, passs each result to `f`, and returns what `f` returns.
+- `opt_sc(x)`: Consumes tokens that matches `x`, and if it fails, returns `undefined`.
+- `opt(x)`: Consumes tokens that matches `x`. If it succeeds, returns the result and `undefined`. If it fails, returns `undefined`.
+- `rep_sc(x)`: Consumes tokens that matches `x`. It will try multiple times, until it fails. It returns an array of all results from `x` in order. If `x` fails in the first try, it returns `[]`.
+- `rep(x)` and `repr(x)`: Just like `rep_sc`, but it returns all possible arrays. For example, if `x` succeeds 3 times, rep returns `[x1, x2, x3]`, `[x1, x2]`, `[x1]` and `[]`. `repr` returns the same set of results in a reverse order.
+- `list(x,d)` and `list_sc(x,d)`: It works like `rep(x)` and `rep_sc(x)`, but you can specify a delimiter between `x`s.
+- `lrec(a,b,f)` and `lrec_sc(a,b,f)`: It works like `apply(seq(a, rep(b)), F(f))` and `apply(seq(a, rep_sc(b), F(f))`. This parser requires `a` to succeed. If `b` succeeds multiple times, `f(a,b)` will be called for multiple times. Details will be explained later.
+
+## Recursive Syntax
+
+Recursive syntax is also very common. Sometimes you need to parse a tree, not just a list, so `lrec`, `lrec_sc` and `rule` is your friend.
+
+You are recommended to read `test/TestRecursiveParser.ts` if you have never learnt about `EBNF`.
+
+### Left Recursive
+
+`lrec` and `lrec_sc` means **Left Recursive (with Short Cut)**. They work in the same way, except that `lrec_sc` returns a single result which consumes tokens as much as possible, `lrec` returns multiple possible results.
+
+Left recursive is a special kind of recursive, usually it appears in left-associated binary operator. In `test/TestRecursiveParser.ts`, there are `TERM`, `FACTOR` and `EXP`.
+
+#### TERM
+
+`TERM` is very straight forward. It parses `1`, `+1`, `-1`, or `(something)`.
+
+#### FACTOR
+
+`FACTOR` is a left recursive parser. It consumes `1`, `1*2` or `1*2*3`. For `1*2*3...`, it is very clear that the structure is `1`, `*2`, `*3`... . And let's look at how `FACTOR` is implemented:
+
+```typescript
+lrec_sc(
+    TERM,
+    seq(
+        alt(str('*'), str('/')),
+        TERM
+    ),
+    applyBinary
+)
+```
+
+According to the description above, `lrec_sc(a,b,f)` is `apply(seq(a, rep_sc(b)), F(f))`. So `FACTOR` will first need to parse `1`, and then it parses `*2`, `*3`, until it fails.
+
+At this moment, you get a result like `['1', ['*2', '*3']]`. And then `f` is called in this way: `f(f('1', '*2'), '*3')`. This is what `F(f)` does here.
+
+It is very cleared that, the way it calls `f` is left-associated, so this is a left recursive parser.
+
+There is no need to have a right recursive parser function, because you could just call this parser inside itself, by using `rule`, which will be explained later.
+
+#### EXP
+
+Splitting `+`, `-` and `*`, `/` to `EXP` and `FACTOR` and letting `EXP` call `FACTOR` is a common trick to specify operator precedence. If you need to parse C++, which has about 20 levels of operator precedence, you will need to have 20 `EXP`s calling each other.
+
+### Recursive
+
+`EXP` calls `FACTOR`, `FACTOR` calls `TERM`, and `TERM` finally calls `EXP` again. This is recursive. You are not able to do this in one parser combinator expression. This is why you need `rule`. `rule` returns a parser, you can set another parser to it later by calling the `setPattern` member function.
+When defining `TERM`, `EXP` is not yet defined, no problem! When `EXP.setPattern` is called, `TERM` will know `EXP`` is updated immediately.
+
+## Utilities
+
+- `expectEOF` looks into all results that returned at the same time, and pick all that consumes all tokens. If there is any result that fail to consume all tokens, an error will be generated as a hint.
+- `expectSingleResult` will see if there is only one result in the result list. If not, a `TokenError` is thrown.
+
+## More Examples
+
+- [A simple calculator](https://github.com/microsoft/ts-parsec/blob/master/packages/ts-parsec/test/TestRecursiveParser.ts)
+- [A minimum Flow parser](https://github.com/microsoft/react-native-tscodegen/blob/master/packages/minimum-flow-parser/src/Parser.ts)
+
+## In the Future
+
+This project could be open sourced in a separate repo. And I am going to add more features to this library, like:
+
+- context sensitive tokenizer.
+- context sensitive `apply` handler.
+- localized ambiguity recognizing.
+- customizable error reporting.
+- etc .
+
+Localized ambiguity recognizing is also very useful. For example, you try to parse C programs and get this:
+
+```C
+typedef int X;
+int Y;
+
+int main()
+{
+    X * a;
+    Y * a;
+    return 0;
+}
+```
+
+Both `X * a;` and `Y * a;` could be interpreted as variable definition or expression. This is ambiguity, and it could be resolved by context sensitive information. Usually you will have two choices:
+
+- Resolve ambiguity using context sensitive information. This requires you to maintain a symbol table while parsing `typedef int X;` and `int Y;`. In the future, when the handler passing to `apply` is given more API to maintain a data structure that could be passing along parsing, you are able to know that `X * a;` is a variable definition and `Y * a` is an expression. Since ts-parsec handles ambiguity by running parsers parallelly (not threading related), **you cannot just maintain a global variable**, because you don't know when the data created by an `apply` handler need to be discarded when this branch of the parser fails later.
+- Package amgiguous choices locally. At this moment, since both `X * a;` and `Y * a;` have two different ways to interpret, the parser will give you 2*2=4 results. If you have 10 statements like this, you will get up to 1024 results! This is not acceptable! If you don't want to resolve ambiguity immediately, another choice could be that, the parser tells you ambiguity happens during a local area of the code, and you could store this information in your well-designed [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree). In this case, you will get a tree, when you iterate into the function body, you find there are 3 statements, first two of which are ambiguous, each with two possible interpretations listed side. Then instead of having 4 results, you have just 1, although ambiguity is not resolved.
