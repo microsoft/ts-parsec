@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 // tslint:disable:prefer-array-literal
 
 import { readFileSync, writeFileSync } from 'fs';

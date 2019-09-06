@@ -1,12 +1,9 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
+# npm install -g typescript-parsec
 
-// tslint:disable:no-duplicate-imports
-// tslint:disable:trailing-comma
+ts-parsec is a parser combinator library prepared for typescript. By using this library, you are able to create parsers very quickly using just a few lines of code. For document and more information, please checkout our [repo on github](https://github.com/microsoft/ts-parsec).
 
-import * as assert from 'assert';
-import { Token } from 'typescript-parsec';
-import { buildLexer, expectEOF, expectSingleResult, rule } from 'typescript-parsec';
+```typescript
+import { buildLexer, expectEOF, expectSingleResult, rule, Token } from 'typescript-parsec';
 import { alt, apply, kmid, lrec_sc, seq, str, tok } from 'typescript-parsec';
 
 enum TokenKind {
@@ -93,15 +90,5 @@ function evaluate(expr: string): number {
     return expectSingleResult(expectEOF(EXP.parse(lexer.parse(expr))));
 }
 
-test(`Parser: calculator`, () => {
-    assert.strictEqual(evaluate('1'), 1);
-    assert.strictEqual(evaluate('+1.5'), 1.5);
-    assert.strictEqual(evaluate('-0.5'), -0.5);
-    assert.strictEqual(evaluate('1 + 2'), 3);
-    assert.strictEqual(evaluate('1 - 2'), -1);
-    assert.strictEqual(evaluate('1 * 2'), 2);
-    assert.strictEqual(evaluate('1 / 2'), 0.5);
-    assert.strictEqual(evaluate('1 + 2 * 3 + 4'), 11);
-    assert.strictEqual(evaluate('(1 + 2) * (3 + 4)'), 21);
-    assert.strictEqual(evaluate('1.2--3.4'), 4.6);
-});
+console.log(evaluate('(1 + 2) * (3 + 4)'));
+```
