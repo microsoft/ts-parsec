@@ -5,9 +5,9 @@
 // tslint:disable:trailing-comma
 
 import * as assert from 'assert';
-import * as parsec from '../src/index';
-import { buildLexer, expectEOF, unableToConsumeToken } from '../src/index';
-import { alt, apply, opt_sc, rep, rep_sc, seq, tok } from '../src/index';
+import * as parsec from 'ts-parsec';
+import { buildLexer, expectEOF, unableToConsumeToken } from 'ts-parsec';
+import { alt, apply, opt_sc, rep, rep_sc, seq, tok } from 'ts-parsec';
 
 function notUndefined<T>(t: T | undefined): T {
     assert.notStrictEqual(t, undefined);

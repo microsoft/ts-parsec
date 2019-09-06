@@ -22,6 +22,13 @@ yarn build
 yarn test
 ```
 
+## Packages
+
+- **ts-parsec**: Parser combinator for TypeScript
+- **tspc-test**: Unit test project
+- **tspc-utilities**: Code generator for developing **ts-parsec**
+  - At this moment, running `npm run update` will write overloadings for `alt` and `seq` for you
+
 ## Introduction
 
 ts-parsec is a parser combinator for TypeScript. It provides the following features:

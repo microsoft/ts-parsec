@@ -1,12 +1,13 @@
 {
-  "name": "ts-parsec",
+  "name": "tspc-utilities",
   "version": "1.0.0",
   "description": "TypeScript Parser Combinator",
-  "private": false,
-  "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
+  "private": true,
+  "main": "./lib/src/index.js",
+  "types": "./lib/src/index.d.ts",
   "scripts": {
-    "build": "tslint --project tsconfig.json & tsc"
+    "build": "tslint --project tsconfig.json & tsc",
+    "update": "node ./lib/CodegenOverloadings.js 16"
   },
   "repository": {
     "type": "git",
