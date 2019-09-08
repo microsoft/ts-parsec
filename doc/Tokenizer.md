@@ -1,6 +1,6 @@
 # Building a tokenizer using regular expressions
 
-You could use `buildLexer` to create a tokenizer from regular expressions. If you want to write your own tokenizer, just create a linked list of `Token<T>` type. Usually `T` is the tag of tokens, just like `TokenKind` in the example.
+You could use `buildLexer` to create a tokenizer from regular expressions. If you want to write your own tokenizer, just create a linked list of `Token<T>` type. Usually `T` is the tag of tokens, just like `TokenKind` in [A simple calculator](../packages/tspc-test/src/TestRecursiveParser.ts).
 
 ```typescript
 export interface Token<T> {
@@ -11,7 +11,7 @@ export interface Token<T> {
 }
 ```
 
-`pos` is very important. During parsing, parser combinator will hit many errors, because it is very common that a small part of the parser combinator find itself encounter an unexpected token. In this case, the parser combinator returns an error with `pos`. A bigger parser combinator will then turn to another choise (for example, in `alt`, or `list_sc`). If all choices are all failed, it compares all errors that is returned from these choices, and return one that has consumed the most tokens.
+`pos` is very important. During parsing, parser combinator will hit many errors, because it is very common that a small part of the parser combinator find itself encounter an unexpected token. In this case, the parser combinator returns an error with `pos`. A bigger parser combinator will then turn to another choise (for example, in `alt`, or `list_sc`). If all choices are failed, it compares all errors from these choices, and return one that has consumed the most tokens.
 
 When you write your own tokenizer, please take very carefully to generate `pos`. But if you use `buildLexer`, you just forget all of these details.
 
@@ -48,6 +48,6 @@ For some languages, like VB.NET, it has a context sensitive tokenizer. You could
 - Tell me and I add more features to the library for you.
 - Make a pull request!
 
-### NOTE
+## NOTE
 
-`buildLexer` accepts regular expressions that in this form: `/^xxx/g`.
+`buildLexer` only accepts regular expressions like this: `/^xxx/g`.
