@@ -49,7 +49,7 @@ Please read [Getting Started](./doc/GettingStarted.md) for ramping up, or our [d
 
 ## More Examples
 
-- [A simple calculator](./packages/ts-parsec/test/TestRecursiveParser.ts)
+- [A simple calculator](./packages/tspc-test/src/TestRecursiveParser.ts)
 - [A minimum Flow parser](https://github.com/microsoft/react-native-tscodegen/blob/master/packages/minimum-flow-parser/src/Parser.ts)
 
 ## In the Future

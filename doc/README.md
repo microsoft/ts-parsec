@@ -8,6 +8,10 @@ ts-parsec is a parser combinator library prepared for typescript. By using this 
 
 You are recommended to learn [EBNF](https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form) before using this library.
 
+## Getting Started
+
+[Getting Started](./GettingStarted.md).
+
 ## API References
 
 - **Tokenizer**: [Building a tokenizer using regular expressions](./Tokenizer.md).

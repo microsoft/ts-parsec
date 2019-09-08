@@ -1,6 +1,6 @@
 # Getting Started
 
-There is a good example in [test/TestRecursiveParser.ts](https://github.com/microsoft/ts-parsec/blob/master/packages/ts-parsec/test/TestRecursiveParser.ts). But here I have a much more simple example. For example, you want to parse a list of numbers like this:
+There is a good example in [test/TestRecursiveParser.ts](./packages/tspc-test/src/TestRecursiveParser.ts). But here I have a much more simple example. For example, you want to parse a list of numbers like this:
 
 ```plaintext
 123, 456.789, 0
