@@ -12,7 +12,7 @@ apply(seq(a, b), (value: [Ta, Tb]) => {
 })
 ```
 
-Please see [seq](./seq.cmd) and [apply](./apply.cmd) for more details.
+Please see [seq](./seq.md) and [apply](./apply.md) for more details.
 
 `kleft`, `kmid` and `kright` are helper functions to keep the code clean. For example, when we parse TypeScript's import statement, usually it looks like:
 
