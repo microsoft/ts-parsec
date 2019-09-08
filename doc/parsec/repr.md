@@ -20,7 +20,7 @@ repr(tok(TokenKind.Number))
 rep_sc(tok(TokenKind.Number))
 ```
 
-consumes `1 2 3`. Both `rep` and `repr` return 4 results, but `rep_sc` only return ` result:
+consumes `1 2 3`. Both `rep` and `repr` return 4 results, but `rep_sc` only return 1 result:
 
 - `rep`
   - `[1, 2, 3]`
@@ -35,4 +35,4 @@ consumes `1 2 3`. Both `rep` and `repr` return 4 results, but `rep_sc` only retu
 - `rep_sc`
   - `[1, 2, 3]`
 
-Here `1` means a token whose text property is `'1'`.
+Here `1` means a token whose `text` property is `'1'`.
