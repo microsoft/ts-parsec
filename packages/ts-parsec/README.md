@@ -1,6 +1,6 @@
 # npm install -g typescript-parsec
 
-ts-parsec is a parser combinator library prepared for typescript. By using this library, you are able to create parsers very quickly using just a few lines of code. For document and more information, please checkout our [repo on github](https://github.com/microsoft/ts-parsec).
+ts-parsec is a parser combinator library prepared for typescript. By using this library, you are able to create parsers very quickly using just a few lines of code. For document and more information, please checkout our [repo on github](https://github.com/microsoft/ts-parsec), or our [document page](https://github.com/microsoft/ts-parsec/blob/master/doc/README.md).
 
 ```typescript
 import { buildLexer, expectEOF, expectSingleResult, rule, Token } from 'typescript-parsec';
