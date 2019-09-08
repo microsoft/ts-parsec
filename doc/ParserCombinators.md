@@ -24,7 +24,7 @@ ts-parsec provides the following combinators. When I say "`P` returns `T`", it d
   - [rep(x)](./parsec/rep.md) and [repr(x)](./parsec/repr.md): Just like `rep_sc`, but it returns all possible arrays. For example, if `x` succeeds 3 times, rep returns `[x1, x2, x3]`, `[x1, x2]`, `[x1]` and `[]`. `repr` returns the same set of results in a reverse order.
   - [list(x,d)](./parsec/list.md) and [list_sc(x,d)](./parsec/list_sc.md): It works like `rep(x)` and `rep_sc(x)`, but you can specify a delimiter between `x`s.
 - Left Recursive
-  - [lrec(a,b,f)](./parsec/lrec.md) and [lrec_sc(a,b,f)](./parsec/lrec_sc.md): It works like `apply(seq(a, rep(b)), F(f))` and `apply(seq(a, rep_sc(b), F(f))`. This parser requires `a` to succeed. If `b` succeeds multiple times, [f(a,b)](./f.md) will be called for multiple times.
+  - [lrec(a,b,f)](./parsec/lrec.md) and [lrec_sc(a,b,f)](./parsec/lrec_sc.md): It works like `apply(seq(a, rep(b)), F(f))` and `apply(seq(a, rep_sc(b), F(f))`. This parser requires `a` to succeed. If `b` succeeds multiple times, `f(a,b)` will be called for multiple times.
 - Others
   - [apply(x, f)](./parsec/apply.md): Consumes tokens that matches `x`, and if it succeeds, passs each result to `f`, and returns what `f` returns. Details will be explained later.
 
