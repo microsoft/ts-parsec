@@ -42,7 +42,7 @@ apply(
 )
 ```
 
-There are too many useless items in the tuple to pass to `value`.
+There are too many useless items in the tuple passing to `value`.
 When the syntax is changed, we will need to change the parameter type,
 and we need to count carefully to update `value[2]` and `value[5]`.
 This could be solved by using `kleft`, `kmid` or `kright`.
@@ -52,9 +52,9 @@ Usually we have to choices:
 ```typescript
 import {apply, kleft, seq} from 'typescript-parsec';
 |      |                 |      |                 ||
-|      +---           ---+---       kright     ---+|
-|                                                  |
-+-----------          kmid              -----------+
+|      +---           ---+------+   kright     ---+|
+|      |                                          ||
++------+----          kmid              ----------++
 ```
 
 or
@@ -62,9 +62,9 @@ or
 ```typescript
 import {apply, kleft, seq} from 'typescript-parsec';
 |      |                 |      |                 ||
-|      +---      kleft       ---+---           ---+|
-|                                                  |
-+-----------          kmid              -----------+
+|      +---      kleft   +------+---           ---+|
+|      |                                          ||
++------+----          kmid              ----------++
 ```
 
 If we make the first choice, which means we use `kmid` to discard `import {` and `;` from `import {` `apply, kleft, seq} from 'typescript-parsec'` `;`,
@@ -104,4 +104,4 @@ Now all elements in `value` are useful. More importantly,
 when the syntax changes,
 if only two parts in the code is useful remains true,
 we could use `kleft`, `kmid` and `kright` to keep `apply` receives only useful parts,
-so that we don't need to count elements in `value`.
+so that we don't need to count elements in `value`, or even change the type of `value`.
