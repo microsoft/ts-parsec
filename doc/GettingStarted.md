@@ -34,33 +34,35 @@ Now, you need to define your parser:
 const numberListParser = list_sc(tok(TokenKind.Number), str(','));
 ```
 
-`list_sc` means that the parser will try to consume tokens as much as possible.
-If you use `list` instead of `list_sc`, you could get multiple results, which means, if you input `1,2,3`, you could get 3 results: `1`, `1,2`, `1,2,3.`.
+`list_sc` means that the parser will try to consume tokens as many as possible.
+If you use `list` instead of `list_sc`, you could get multiple results. For example, if you input `1,2,3`, you could get 3 results: `1,2,3`, `1,2`, `1`.
 This is a very useful feature when you need to deal with some ambiguity inside a bigger parser, but we don't need it here.
 
-But at this moment, `numberListParser` doesn't give you a number array, it gives you a structure that **topological equivalent** to the syntax you provided. You need one more step to convert it to a number array:
+But at this moment, `numberListParser` doesn't give you a number array, it gives you a structure that **topological equivalent** to the syntax you provide. You need one more step to convert it to a number array:
 
 ```typescript
-const numberListParser = apply(
-    list_sc(tok(TokenKind.Number), str(',')),
-    (tokens: Token<TokenKind.Number>[]]) => {
-        return tokens.map((token: Token<TokenKind.Number>) => {
-            return +token.text;
-        });
-    });
+const numberParser = apply(
+    tok(TokenKind.Number),
+    (token: Token<TokenKind.Number>) => {
+        return +token.text;
+    }
+);
+
+const numberListParser = list_sc(numberParser, str(','));
 ```
 
-`apply` means that, you are not satisfy with the direct result of the parser, you want to transform it to your favorite data structure. Here you need a number array.
-
-So let's try it!
+`apply` means that, you are not satisfy with the direct result of the parser, you want to transform it to your favorite data structure.
+Now we have already get a parser returning a number array,
+but by running `numberListParser`, it gives us a data structure, contains many information we don't need.
+If you don't care about all of this, like is the input matches the parser, or where does the parser fail,
+you just want the number array and let the parser steps until the end of the input,
+You could use `expectSingleResult` and `expectEOF` to make your code clean:
 
 ```typescript
 const numberArray = expectSingleResult(expectEOF(numberListParser.parse(tokenizer.parse('123, 456.789, 0'))));
 ```
 
 Now you get: `[123, 456.789, 0]`!
-
-After calling `expectSingleResult(expectEOF(x))`, you choose the best result among multiple ones returned from the parser. If all tokens are not consumed, you will get an exception, with details about where goes wrong in your input.
 
 Don't forget to import all of these symbols!
 
