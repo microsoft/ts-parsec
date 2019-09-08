@@ -40,7 +40,7 @@ const parser1 =
     apply(
         seq(
             NUMBER,
-            rep(kright(str('+'), NUMBER))
+            rep_sc(kright(str('+'), NUMBER))
         ),
         (value: [number, number[]]) => {
             return value[0] + value[1].reduce(addTwoNumbers, 0);
@@ -48,7 +48,7 @@ const parser1 =
     );
 ```
 
-If I could replace it by `list_sc`, the adding function could be much simpler:
+If we could replace it by `list_sc`, the adding function could be much simpler:
 
 ```typescript
 const parser2 =
@@ -56,7 +56,7 @@ const parser2 =
         list_sc(NUMBER, str('+')),
         (value: number[]) => {
             // list_sc fails if there is no number, so value will never be empty.
-            return value.reduce(addTwoNumbers, 0);
+            return value.reduce(addTwoNumbers);
         }
     );
 ```
