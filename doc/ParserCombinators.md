@@ -64,11 +64,11 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
     - Never fails.
   - [rep(x)](./parsec/rep.md):
     - Consumes `x` zero to multiple times.
-    - Returns `Tx[]`. If 3 `x` are consumes, it returns 4 results at the same time: `[x1, x2, x3]`, `[x1, x2]`, `[x1]` and `[]`.
+    - Returns `Tx[]`. If 3 `x` are consumes, it returns multiple results in the order like `[x1, x2, x3]`, `[x1, x2]`, `[x1]` and `[]`.
     - Never fails.
   - [repr(x)](./parsec/repr.md):
     - Consumes `x` zero to multiple times.
-    - Returns `Tx[]`. If 3 `x` are consumes, it returns 4 results at the same time: `[]`, `[x1]`, `[x1, x2]`, and `[x1, x2, x3]`.
+    - Returns `Tx[]`. If 3 `x` are consumes, it returns multiple results in the order like `[]`, `[x1]`, `[x1, x2]`, and `[x1, x2, x3]`.
     - Never fails.
   - [list(x, d)](./parsec/list.md).
     - Equivalent to `seq(x, rep(x, d))`.
@@ -81,11 +81,11 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
 - Left Recursive
   - [lrec(a, b, f)](./parsec/lrec.md):
     - Equivalent to `seq(a, rep(b))`.
-    - Returns the result of function `f`.
+    - Returns the result of `f(f(f(a, b1), b2), b3) ...`. If no `b` succeeds, it returns `a`, which requies `Ta` should be compatible with the return type of `f`.
     - Fails if `a` fails.
   - [lrec_sc(a,b,f)](./parsec/lrec_sc.md):
-    - Equivalent to `seq(a, rep(b)))`.
-    - Returns the result of function `f`.
+    - Equivalent to `seq(a, rep_sc(b)))`.
+    - Returns the result of `f(f(f(a, b1), b2), b3) ...`. If no `b` succeeds, it returns `a`, which requies `Ta` should be compatible with the return type of `f`.
     - Fails if `a` fails.
 - Others
   - [apply(x, f)](./parsec/apply.md):
