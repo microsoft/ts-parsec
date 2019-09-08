@@ -4,29 +4,100 @@ You define a `LL parser` by `EBNF`, and then translate it using parser combinato
 Short cut combinators returns the best result, even if it could fail the whole parser.
 You need to choose them wisely.
 
-At this moment, ts-parsec provides the following combinators:
+## Parser Combinator Functions
 
-- `nil`: Consumes no token and returns `undefined`. When I say "it returns `undefined`", it doesn't mean the function returns undefined, it means that `returnValue.candidates[something].result === undefined`. In most of the cases, you don't need to deal with multiple results by yourself, this is why you want to call `exceptSingleResult` and `expectEOF`. They will be explained later.
-- `str('x')`: Consumes a token that is `'x'`.
-- `tok(x)`: Consumes a token whose `kind` is `x`. If you use `buildLexer`, these values of `x` is put in the 3rd place in each line.
-- `seq(a,b,c)`: Consumes tokens that matches `a`, `b` and then `c` in order. It returns a tuple, containing results from `a`, `b` and `c` in order. You could put 2-12 arguments in `seq`.
-- `kleft(a, b)`: Just like `seq(a, b)` but only result of `a` is returned.
-- `kmid(a, b, c)`: Just like `seq(a, b, c)` but only result of `b` is returned.
-- `kright(a, b)`: Just like `seq(a, b)` but only result of `b` is returned.
-- `alt(a,b,c)`: Consumes tokens that matches `a`, `b` or `c`. It returns a union type, which could be the result of `a`, `b` or `c`. If multiple parsers in `alt` matches, they are all returned. If non of them match, it fails. You could put 2-12 arguments in `alt`.
-- `apply(x, f)`: Consumes tokens that matches `x`, and if it succeeds, passs each result to `f`, and returns what `f` returns.
-- `opt_sc(x)`: Consumes tokens that matches `x`, and if it fails, returns `undefined`.
-- `opt(x)`: Consumes tokens that matches `x`. If it succeeds, returns the result and `undefined`. If it fails, returns `undefined`.
-- `rep_sc(x)`: Consumes tokens that matches `x`. It will try multiple times, until it fails. It returns an array of all results from `x` in order. If `x` fails in the first try, it returns `[]`.
-- `rep(x)` and `repr(x)`: Just like `rep_sc`, but it returns all possible arrays. For example, if `x` succeeds 3 times, rep returns `[x1, x2, x3]`, `[x1, x2]`, `[x1]` and `[]`. `repr` returns the same set of results in a reverse order.
-- `list(x,d)` and `list_sc(x,d)`: It works like `rep(x)` and `rep_sc(x)`, but you can specify a delimiter between `x`s.
-- `lrec(a,b,f)` and `lrec_sc(a,b,f)`: It works like `apply(seq(a, rep(b)), F(f))` and `apply(seq(a, rep_sc(b), F(f))`. This parser requires `a` to succeed. If `b` succeeds multiple times, `f(a,b)` will be called for multiple times. Details will be explained later.
+ts-parsec provides the following combinators.
+
+When I say "`P` returns `T`", it doesn't mean the function `P` returns a value of type `T`, it means that `returnValue.candidates[something].result` is `T`.
+
+If a parser combinator involves other parser combinators, like `seq(a,b)`, then `a` returns `Ta`, `b` returns `Tb`, so `seq(a,b)` returns `[Ta, Tb]`.
+
+In most of the cases, you don't need to deal with multiple results by yourself, this is why you want to call `exceptSingleResult` and `expectEOF`. They are explained [here](./README.md).
+
+- Token Filters
+  - [nil()](./parsec/nil.md):
+    - Consumes no token.
+    - Returns `undefined`.
+    - Never fails.
+  - [str('x')](./parsec/str.md):
+    - Consumes a token that is `'x'`.
+    - Returns `Token<T>`.
+    - Fails if the current token could not be consumed.
+  - [tok(x)](./parsec/tok.md):
+    - Consumes a token whose `kind` is `x`. If you use `buildLexer`, these values of `x` is put in the 3rd place in each line.
+    - Returns `Token<T>`.
+    - Fails if the current token could not be consumed.
+- Sequencial
+  - [seq(a, b, c)](./parsec/seq.md):
+    - Consumes tokens that matches `a`, `b` and then `c` in order. You could put 2-16 arguments in `seq`.
+    - Returns `[Ta, Tb, Tc]`.
+    - Fails if **one of** `a`, `b` and `c` fails.
+  - [kleft(a, b)](./parsec/kleft.md):
+    - Equivalent to `seq(a, b)`.
+    - Returns `Ta`.
+    - Fails if **one of** `a` and `b` fails.
+  - [kmid(a, b, c)](./parsec/kmid.md):
+    - Equivalent to `seq(a, b, c)`.
+    - Returns `Tb`.
+    - Fails if **one of** `a`, `b` and `c` fails.
+  - [kright(a, b)](./parsec/kright.md):
+    - Equivalent to `seq(a, b)`.
+    - Returns `Tb`.
+    - Fails if **one of** `a` and `b` fails.
+- Alternative
+  - [alt(a, b, c)](./parsec/alt.md):
+    - Consumes tokens that matches `a`, `b` or `c`. You could put 2-16 arguments in `alt`.
+    - Returns `Ta | Tb | Tc`.
+    - Fails if **all of** `a`, `b` or `c` fails.
+  - [opt_sc(x)](./parsec/opt_sc.md):
+    - Consumes `x`.
+    - Returns `Tx | undefined`. It returns `undefined` only if `x` fails.
+    - Never fails.
+  - [opt(x)](./parsec/opt.md):
+    - Equivalent to `x | nil<T>()`.
+    - returns `Tx | undefined`.
+    - Never fails.
+- Repeative
+  - [rep_sc(x)](./parsec/rep_sc.md):
+    - Consumes as many `x` as possible.
+    - Returns `Tx[]`. If no `x` could be consumed, it returns `[]`.
+    - Never fails.
+  - [rep(x)](./parsec/rep.md):
+    - Consumes `x` zero to multiple times.
+    - Returns `Tx[]`. If 3 `x` are consumes, it returns multiple results in the order like `[x1, x2, x3]`, `[x1, x2]`, `[x1]` and `[]`.
+    - Never fails.
+  - [repr(x)](./parsec/repr.md):
+    - Consumes `x` zero to multiple times.
+    - Returns `Tx[]`. If 3 `x` are consumes, it returns multiple results in the order like `[]`, `[x1]`, `[x1, x2]`, and `[x1, x2, x3]`.
+    - Never fails.
+  - [list(x, d)](./parsec/list.md).
+    - Equivalent to `seq(x, rep(kright(d, x)))`.
+    - Returns `Tx[]`, instead of `[Tx, Tx[]]`.
+    - Fails if `x` succeeds zero times.
+  - [list_sc(x,d)](./parsec/list_sc.md):
+    - Equivalent to `seq(x, rep_sc(kright(d, x)))`.
+    - Returns `Tx[]`, instead of `[Tx, Tx[]]`.
+    - Fails if `x` succeeds zero times.
+- Left Recursive
+  - [lrec(a, b, f)](./parsec/lrec.md):
+    - Equivalent to `seq(a, rep(b))`.
+    - Returns the result of `f(f(f(a, b1), b2), b3) ...`. If no `b` succeeds, it returns `a`, which requies `Ta` should be compatible with the return type of `f`.
+    - Fails if `a` fails.
+  - [lrec_sc(a,b,f)](./parsec/lrec_sc.md):
+    - Equivalent to `seq(a, rep_sc(b)))`.
+    - Returns the result of `f(f(f(a, b1), b2), b3) ...`. If no `b` succeeds, it returns `a`, which requies `Ta` should be compatible with the return type of `f`.
+    - Fails if `a` fails.
+- Others
+  - [apply(x, f)](./parsec/apply.md):
+    - Equivalent to `x`.
+    - Returns the result of function `f`. The function will be called against the result of `x`, if `x` succeeds.
+    - Fails if `x` fails.
 
 ## Recursive Syntax
 
 Recursive syntax is also very common. Sometimes you need to parse a tree, not just a list, so `lrec`, `lrec_sc` and `rule` is your friend.
 
-You are recommended to read `test/TestRecursiveParser.ts` if you have never learnt about `EBNF`.
+You are recommended to read [A simple calculator](../packages/tspc-test/src/TestRecursiveParser.ts) if you have never learnt about `EBNF`.
 
 ### Left Recursive
 
