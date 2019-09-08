@@ -1,6 +1,6 @@
 # Parser Combinator: str
 
-`str('x')` consumes a token, if the `text` property of the token is exactly `'x'`. If fails if it doesn't match the `text` property.
+`str('x')` consumes a token, if the `text` property of the token is exactly `'x'`. It fails if it doesn't match the `text` property.
 
 For example, for passing TypeScript's export statement:
 

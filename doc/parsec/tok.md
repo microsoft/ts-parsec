@@ -1,6 +1,6 @@
 # Parser Combinator: tok
 
-`tok(x)` consumes a token, if the `kind` property of the token is exactly `x`. If fails if it doesn't match the `kind` property.
+`tok(x)` consumes a token, if the `kind` property of the token is exactly `x`. It fails if it doesn't match the `kind` property.
 
 For example, for passing TypeScript's export statement:
 
