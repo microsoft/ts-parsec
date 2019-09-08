@@ -19,7 +19,7 @@ Usually we don't need to pass type arguments to parser combinator functions, but
 Because by just writing `nil()`, TypeScript has no information to infer the type argument `T` for us.
 Since the most useful case for `nil<T>()` is to put in `alt`, so here we provide `opt` to make the code clean.
 
-If you need `alt(a, b, c, nil<T>())`, then `opt(alt(a, b, c))` is recommended.
+If you need `alt(a, b, c, nil<T>())`, then `opt_sc(alt(a, b, c))` is recommended, when you don't want to also receive `undefined` when `alt` succeeds.
 
 `opt` and `opt_sc` are similar to each other,
 while `opt(a)` returns both `Ta` and `undefined` when `a` succeeds,
