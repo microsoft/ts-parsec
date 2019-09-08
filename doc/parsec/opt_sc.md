@@ -48,7 +48,7 @@ Please note that, `opt_sc` here is better than `opt`, actually `opt` cannot be u
 Because when we parse a TypeScript program, multiple statements could appear one by one in a block statement.
 Besides of expression statements, a single semicolon could be a statement.
 
-So we prepare a parser like this
+Assume that we prepare a parser like this
 
 ```typescript
 kmid(
@@ -70,3 +70,5 @@ And then we test `{DoSomething()}`, it still works fine, return a block statemen
 But now we test `{DoSomething();`}, the input becomes ambiguous, because `DoSomething();` could also be two statement: `DoSomething()` and `;`.
 
 By having `opt_sc(str(';'))` instead of `opt(str(';')))`, the semicolon will be consumed when `EXPRESSION` succeeds, so the input could not be ambiguous.
+
+If we use `opt` here, it returns 2 results, so that `DoSomething();` could have the whole text consumed, and have only `DoSomething()`consumed at the same time. This makes the input be ambiguous.
