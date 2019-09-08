@@ -21,7 +21,7 @@ But instead of receiving `[Ta, Ta[]]` where the second element could be an empty
 
 Note that `rep` could return an empty array if the first `a` fails, but `list` will fail in this case.
 
-`list` and `list_sc` are similar to each other, while `list` returns all possible results, but `list_sc` returns the longest results. For the case `1, 2, 3, 4`:
+`list` and `list_sc` are similar to each other, while `list` returns all possible results, `list_sc` returns the longest result. Given `1, 2, 3, 4`:
 
 ```typescript
 list(tok(TokenKind.Number), str(','))
