@@ -71,11 +71,11 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
     - Returns `Tx[]`. If 3 `x` are consumes, it returns multiple results in the order like `[]`, `[x1]`, `[x1, x2]`, and `[x1, x2, x3]`.
     - Never fails.
   - [list(x, d)](./parsec/list.md).
-    - Equivalent to `seq(x, rep(x, d))`.
+    - Equivalent to `seq(x, rep(kright(d, x)))`.
     - Returns `Tx[]`, instead of `[Tx, Tx[]]`.
     - Fails if `x` succeeds zero times.
   - [list_sc(x,d)](./parsec/list_sc.md):
-    - Equivalent to `seq(x, rep_sc(x, d))`.
+    - Equivalent to `seq(x, rep_sc(kright(d, x)))`.
     - Returns `Tx[]`, instead of `[Tx, Tx[]]`.
     - Fails if `x` succeeds zero times.
 - Left Recursive
