@@ -54,15 +54,15 @@ Please read [Getting Started](./doc/GettingStarted.md) for ramping up, or our [d
 
 ## In the Future
 
-This project could be open sourced in a separate repo. And I am going to add more features to this library, like:
+At this moment, the parser could handle complex syntax very well, but I still have a list of features to complete:
 
 - context sensitive tokenizer.
 - context sensitive `apply` handler.
 - localized ambiguity recognizing.
-- customizable error reporting.
+- customizable error reporting and recovering.
 - etc .
 
-Localized ambiguity recognizing is also very useful. For example, you try to parse C programs and get this:
+Localized ambiguity recognizing is very useful. For example, you try to parse C programs and get this:
 
 ```C
 typedef int X;
