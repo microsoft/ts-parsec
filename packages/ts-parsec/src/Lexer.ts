@@ -23,9 +23,19 @@ export interface Lexer<T> {
     parse(input: string): Token<T> | undefined;
 }
 
+function posToString(pos: TokenPosition | undefined): string {
+    return pos === undefined ? '<END-OF-FILE>' : JSON.stringify(pos);
+}
+
 export class TokenError extends Error {
     constructor(public pos: TokenPosition | undefined, public errorMessage: string) {
-        super(`${JSON.stringify(pos)}: ${errorMessage}`);
+        super(`${posToString(pos)}: ${errorMessage}`);
+    }
+}
+
+export class TokenRangeError extends Error {
+    constructor(public first: TokenPosition | undefined, public next: TokenPosition | undefined, public errorMessage: string) {
+        super(`${posToString(first)} - ${posToString(next)}: ${errorMessage}`);
     }
 }
 

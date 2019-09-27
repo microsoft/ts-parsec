@@ -68,3 +68,4 @@ When you have a complex grammar, you are recommended to use `apply` everywhere, 
 - **Utilities**
   - `expectEOF` looks into all results that returned at the same time, and pick all that consumes all tokens. If there is any result that fail to consume all tokens, an error will be generated as a hint.
   - `expectSingleResult` will see if there is only one result in the result list. If not, a `TokenError` is thrown.
+  - `TokenRangeError` is similar to `TokenError` but it has a position range. This error will not be thrown by this library, it is reserved for your convenience.

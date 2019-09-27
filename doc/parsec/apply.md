@@ -48,3 +48,8 @@ apply(
 ```
 
 Knowing return types of parser combinator functions is important, so that to use `apply` in a correct way.
+
+## Note
+
+The callback to `apply` could have a second parameter: `[Token<T> | undefined, Token<T> | undefined]`, which represents the complete range of the result.
+`undefined` means "end of file".
