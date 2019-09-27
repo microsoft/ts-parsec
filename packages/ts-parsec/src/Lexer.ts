@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+// tslint:disable:max-classes-per-file
 // tslint:disable:no-constant-condition
 // tslint:disable:no-null-keyword
 
