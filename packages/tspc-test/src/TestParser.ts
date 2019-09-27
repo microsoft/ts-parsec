@@ -41,6 +41,7 @@ test(`Parser: str`, () => {
         const result = succeeded(str('123').parse(firstToken));
         assert.strictEqual(result.length, 1);
         assert.strictEqual(result[0].result.text, '123');
+        assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, firstToken.next);
     }
     {
@@ -55,6 +56,7 @@ test(`Parser: tok`, () => {
         const result = succeeded(tok(TokenKind.Number).parse(firstToken));
         assert.strictEqual(result.length, 1);
         assert.strictEqual(result[0].result.text, '123');
+        assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, firstToken.next);
     }
     {
@@ -69,6 +71,7 @@ test(`Parser: alt`, () => {
         const result = succeeded(alt(tok(TokenKind.Number), tok(TokenKind.Identifier)).parse(firstToken));
         assert.strictEqual(result.length, 1);
         assert.strictEqual(result[0].result.text, '123');
+        assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, firstToken.next);
     }
 });
@@ -83,6 +86,7 @@ test(`Parser: seq`, () => {
         const result = succeeded(seq(tok(TokenKind.Number), tok(TokenKind.Number)).parse(firstToken));
         assert.strictEqual(result.length, 1);
         assert.deepStrictEqual(result[0].result.map((value: Token<TokenKind>) => value.text), ['123', '456']);
+        assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, undefined);
     }
 });
@@ -93,18 +97,21 @@ test(`Parser: kleft, kmid, kright`, () => {
         const result = succeeded(kleft(tok(TokenKind.Number), seq(tok(TokenKind.Number), tok(TokenKind.Number))).parse(firstToken));
         assert.strictEqual(result.length, 1);
         assert.strictEqual(result[0].result.text, '123');
+        assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, undefined);
     }
     {
         const result = succeeded(kmid(tok(TokenKind.Number), tok(TokenKind.Number), tok(TokenKind.Number)).parse(firstToken));
         assert.strictEqual(result.length, 1);
         assert.strictEqual(result[0].result.text, '456');
+        assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, undefined);
     }
     {
         const result = succeeded(kright(tok(TokenKind.Number), seq(tok(TokenKind.Number), tok(TokenKind.Number))).parse(firstToken));
         assert.strictEqual(result.length, 1);
         assert.deepStrictEqual(result[0].result.map((value: Token<TokenKind>) => value.text), ['456', '789']);
+        assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, undefined);
     }
 });
@@ -115,8 +122,10 @@ test(`Parser: opt`, () => {
         const result = succeeded(opt(tok(TokenKind.Number)).parse(firstToken));
         assert.strictEqual(result.length, 2);
         assert.strictEqual((<Token<TokenKind>>result[0].result).text, '123');
+        assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, firstToken.next);
         assert.strictEqual(result[1].result, undefined);
+        assert.strictEqual(result[1].firstToken, firstToken);
         assert.strictEqual(result[1].nextToken, firstToken);
     }
 });
@@ -127,12 +136,14 @@ test(`Parser: opt_sc`, () => {
         const result = succeeded(opt_sc(tok(TokenKind.Number)).parse(firstToken));
         assert.strictEqual(result.length, 1);
         assert.strictEqual((<Token<TokenKind>>result[0].result).text, '123');
+        assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, firstToken.next);
     }
     {
         const result = succeeded(opt_sc(tok(TokenKind.Identifier)).parse(firstToken));
         assert.strictEqual(result.length, 1);
         assert.strictEqual(result[0].result, undefined);
+        assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, firstToken);
     }
 });
@@ -143,12 +154,14 @@ test(`Parser: rep_sc`, () => {
         const result = succeeded(rep_sc(tok(TokenKind.Number)).parse(firstToken));
         assert.strictEqual(result.length, 1);
         assert.deepStrictEqual(result[0].result.map((value: Token<TokenKind>) => value.text), ['123', '456']);
+        assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, undefined);
     }
     {
         const result = succeeded(rep_sc(tok(TokenKind.Identifier)).parse(firstToken));
         assert.strictEqual(result.length, 1);
         assert.deepStrictEqual(result[0].result.map((value: Token<TokenKind>) => value.text), []);
+        assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, firstToken);
     }
 });
@@ -159,10 +172,13 @@ test(`Parser: repr`, () => {
         const result = succeeded(repr(tok(TokenKind.Number)).parse(firstToken));
         assert.strictEqual(result.length, 3);
         assert.deepStrictEqual(result[0].result, []);
+        assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, firstToken);
         assert.deepStrictEqual(result[1].result.map((value: Token<TokenKind>) => value.text), ['123']);
+        assert.strictEqual(result[1].firstToken, firstToken);
         assert.strictEqual(result[1].nextToken, firstToken.next);
         assert.deepStrictEqual(result[2].result.map((value: Token<TokenKind>) => value.text), ['123', '456']);
+        assert.strictEqual(result[2].firstToken, firstToken);
         assert.strictEqual(result[2].nextToken, undefined);
     }
 });
@@ -173,10 +189,13 @@ test(`Parser: rep`, () => {
         const result = succeeded(rep(tok(TokenKind.Number)).parse(firstToken));
         assert.strictEqual(result.length, 3);
         assert.deepStrictEqual(result[0].result.map((value: Token<TokenKind>) => value.text), ['123', '456']);
+        assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, undefined);
         assert.deepStrictEqual(result[1].result.map((value: Token<TokenKind>) => value.text), ['123']);
+        assert.strictEqual(result[1].firstToken, firstToken);
         assert.strictEqual(result[1].nextToken, firstToken.next);
         assert.deepStrictEqual(result[2].result, []);
+        assert.strictEqual(result[2].firstToken, firstToken);
         assert.strictEqual(result[2].nextToken, firstToken);
     }
 });
@@ -196,10 +215,13 @@ test(`Parser: apply`, () => {
         );
         assert.strictEqual(result.length, 3);
         assert.strictEqual(result[0].result, '');
+        assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, firstToken);
         assert.strictEqual(result[1].result, '123');
+        assert.strictEqual(result[1].firstToken, firstToken);
         assert.strictEqual(result[1].nextToken, firstToken.next);
         assert.strictEqual(result[2].result, '123;456');
+        assert.strictEqual(result[2].firstToken, firstToken);
         assert.strictEqual(result[2].nextToken, undefined);
     }
 });
