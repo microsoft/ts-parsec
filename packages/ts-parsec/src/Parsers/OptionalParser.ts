@@ -19,6 +19,7 @@ export function opt_sc<TKind, TResult>(p: Parser<TKind, TResult>): Parser<TKind,
             } else {
                 return {
                     candidates: [{
+                        firstToken: token,
                         nextToken: token,
                         result: undefined
                     }],

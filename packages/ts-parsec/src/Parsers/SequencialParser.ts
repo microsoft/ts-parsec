@@ -192,7 +192,7 @@ export function seq(...ps: Parser<void, {}>[]): Parser<void, {}> {
     return {
         parse(token: Token<void> | undefined): ParserOutput<void, {}> {
             let error: ParseError | undefined;
-            let result: ParseResult<void, {}[]>[] = [{ nextToken: token, result: [] }];
+            let result: ParseResult<void, {}[]>[] = [{ firstToken: token, nextToken: token, result: [] }];
 
             for (const p of ps) {
                 if (result.length === 0) {
@@ -208,6 +208,7 @@ export function seq(...ps: Parser<void, {}>[]): Parser<void, {}> {
                     if (output.successful) {
                         for (const candidate of output.candidates) {
                             result.push({
+                                firstToken: step.firstToken,
                                 nextToken: candidate.nextToken,
                                 result: step.result.concat([candidate.result])
                             });

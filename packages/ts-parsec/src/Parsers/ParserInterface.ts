@@ -9,6 +9,7 @@ import { Token, TokenPosition } from './../Lexer';
  *   nextToken: The first unconsumed token.
  */
 export interface ParseResult<TKind, TResult> {
+    readonly firstToken: Token<TKind> | undefined;
     readonly nextToken: Token<TKind> | undefined;
     readonly result: TResult;
 }

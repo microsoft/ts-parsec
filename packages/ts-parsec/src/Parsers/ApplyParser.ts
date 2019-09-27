@@ -5,7 +5,7 @@ import { Token } from '../Lexer';
 import { Parser, ParseResult, ParserOutput } from './ParserInterface';
 import { seq } from './SequencialParser';
 
-export function apply<TKind, TFrom, TTo>(p: Parser<TKind, TFrom>, callback: (value: TFrom) => TTo): Parser<TKind, TTo> {
+export function apply<TKind, TFrom, TTo>(p: Parser<TKind, TFrom>, callback: (value: TFrom, tokenRange: [Token<TKind> | undefined, Token<TKind> | undefined]) => TTo): Parser<TKind, TTo> {
     return {
         parse(token: Token<TKind>): ParserOutput<TKind, TTo> {
             const output = p.parse(token);
@@ -13,8 +13,9 @@ export function apply<TKind, TFrom, TTo>(p: Parser<TKind, TFrom>, callback: (val
                 return {
                     candidates: output.candidates.map((value: ParseResult<TKind, TFrom>) => {
                         return {
+                            firstToken: token,
                             nextToken: value.nextToken,
-                            result: callback(value.result)
+                            result: callback(value.result, [token, value.nextToken])
                         };
                     }),
                     successful: true,

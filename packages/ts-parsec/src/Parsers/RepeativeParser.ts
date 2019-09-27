@@ -32,7 +32,7 @@ export function rep_sc<TKind, TResult>(p: Parser<TKind, TResult>): Parser<TKind,
     return {
         parse(token: Token<TKind>): ParserOutput<TKind, TResult[]> {
             let error: ParseError | undefined;
-            let result: ParseResult<TKind, TResult[]>[] = [{ nextToken: token, result: [] }];
+            let result: ParseResult<TKind, TResult[]>[] = [{ firstToken: token, nextToken: token, result: [] }];
 
             while (true) {
                 const steps = result;
@@ -45,6 +45,7 @@ export function rep_sc<TKind, TResult>(p: Parser<TKind, TResult>): Parser<TKind,
                         for (const candidate of output.candidates) {
                             if (candidate.nextToken !== step.nextToken) {
                                 result.push({
+                                    firstToken: step.firstToken,
                                     nextToken: candidate.nextToken,
                                     result: step.result.concat([candidate.result])
                                 });
@@ -67,7 +68,7 @@ export function repr<TKind, TResult>(p: Parser<TKind, TResult>): Parser<TKind, T
     return {
         parse(token: Token<TKind>): ParserOutput<TKind, TResult[]> {
             let error: ParseError | undefined;
-            const result: ParseResult<TKind, TResult[]>[] = [{ nextToken: token, result: [] }];
+            const result: ParseResult<TKind, TResult[]>[] = [{ firstToken: token, nextToken: token, result: [] }];
 
             for (let i = 0; i < result.length; i++) {
                 const step = result[i];
@@ -78,6 +79,7 @@ export function repr<TKind, TResult>(p: Parser<TKind, TResult>): Parser<TKind, T
                     for (const candidate of output.candidates) {
                         if (candidate.nextToken !== step.nextToken) {
                             result.push({
+                                firstToken: step.firstToken,
                                 nextToken: candidate.nextToken,
                                 result: step.result.concat([candidate.result])
                             });

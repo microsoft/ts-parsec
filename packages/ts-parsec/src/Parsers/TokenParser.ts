@@ -9,6 +9,7 @@ export function nil<T>(): Parser<T, undefined> {
         parse(token: Token<T> | undefined): ParserOutput<T, undefined> {
             return {
                 candidates: [{
+                    firstToken: token,
                     nextToken: token,
                     result: undefined
                 }],
@@ -30,6 +31,7 @@ export function str<T>(toMatch: string): Parser<T, Token<T>> {
             }
             return {
                 candidates: [{
+                    firstToken: token,
                     nextToken: token.next,
                     result: token
                 }],
@@ -51,6 +53,7 @@ export function tok<T>(toMatch: T): Parser<T, Token<T>> {
             }
             return {
                 candidates: [{
+                    firstToken: token,
                     nextToken: token.next,
                     result: token
                 }],
