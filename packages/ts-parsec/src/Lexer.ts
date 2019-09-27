@@ -39,6 +39,19 @@ export class TokenRangeError extends Error {
     }
 }
 
+export function extractByPositionRange(input: string, first: TokenPosition | undefined, next: TokenPosition | undefined): string {
+    const firstIndex = first === undefined ? input.length : first.index;
+    const nextIndex = next === undefined ? input.length : next.index;
+    if (firstIndex >= nextIndex) {
+        return '';
+    }
+    return input.substring(firstIndex, nextIndex);
+}
+
+export function extractByTokenRange<T>(input: string, first: Token<T> | undefined, next: Token<T> | undefined): string {
+    return extractByPositionRange(input, (first === undefined ? undefined : first.pos), (next === undefined ? undefined : next.pos));
+}
+
 class TokenImpl<T> implements Token<T> {
     private nextToken: Token<T> | undefined | null;
 
