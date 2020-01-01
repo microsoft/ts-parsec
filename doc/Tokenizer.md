@@ -11,7 +11,7 @@ export interface Token<T> {
 }
 ```
 
-`pos` is very important. During parsing, parser combinator will hit many errors, because it is very common that a small part of the parser combinator find itself encounter an unexpected token. In this case, the parser combinator returns an error with `pos`. A bigger parser combinator will then turn to another choise (for example, in `alt`, or `list_sc`). If all choices are failed, it compares all errors from these choices, and return one that has consumed the most tokens.
+`pos` is very important. During parsing, parser combinator will hit many errors, because it is very common that a small part of the parser combinator find itself encounter an unexpected token. In this case, the parser combinator returns an error with `pos`. A bigger parser combinator will then turn to another choice (for example, in `alt`, or `list_sc`). If all choices are failed, it compares all errors from these choices, and return one that has consumed the most tokens.
 
 When you write your own tokenizer, please take very carefully to generate `pos`. But if you use `buildLexer`, you just forget all of these details.
 
@@ -39,7 +39,7 @@ const tokenizer = buildLexer([
 ]);
 ```
 
-If you gives `true trueLies`, 1st and 2nd both match `true`. But the 1st one appears eariler than the 2nd one in the array passing to `buildLexer`, so 1st wins.
+If you gives `true trueLies`, 1st and 2nd both match `true`. But the 1st one appears earlier than the 2nd one in the array passing to `buildLexer`, so 1st wins.
 And then you get to `trueLies` after skipping a space, 1st and 2nd both match the prefix of the input again. But 1st matches `true`, 2nd matches `trueLies`, 2nd is longer, so 2nd wins.
 
 For some languages, like VB.NET, it has a context sensitive tokenizer. You could embed an XML in the code, while XML and VB.NET have two different sets of token definitions. `buildLexer` could not handle this case. If you have such need, you could:
