@@ -87,10 +87,10 @@ class LexerImpl<T> implements Lexer<T> {
     constructor(public rules: [boolean, RegExp, T][]) {
         for (const rule of this.rules) {
             if (rule[1].source[0] !== '^') {
-                throw new Error(`Regular expression patterns for a tokenizer should start with "$":${rule[1].source}`);
+                throw new Error(`Regular expression patterns for a tokenizer should start with "^": ${rule[1].source}`);
             }
             if (!rule[1].global) {
-                throw new Error(`Regular expression patterns for a tokenizer should be global:${rule[1].source}`);
+                throw new Error(`Regular expression patterns for a tokenizer should be global: ${rule[1].source}`);
             }
         }
     }
