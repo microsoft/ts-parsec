@@ -64,11 +64,11 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
     - Never fails.
   - [rep(x)](./parsec/rep.md):
     - Consumes `x` zero to multiple times.
-    - Returns `Tx[]`. If 3 `x` are consumes, it returns multiple results in the order like `[x1, x2, x3]`, `[x1, x2]`, `[x1]` and `[]`.
+    - Returns `Tx[]`. If 3 `x` are consumed, it returns multiple results in the order like `[x1, x2, x3]`, `[x1, x2]`, `[x1]` and `[]`.
     - Never fails.
   - [repr(x)](./parsec/repr.md):
     - Consumes `x` zero to multiple times.
-    - Returns `Tx[]`. If 3 `x` are consumes, it returns multiple results in the order like `[]`, `[x1]`, `[x1, x2]`, and `[x1, x2, x3]`.
+    - Returns `Tx[]`. If 3 `x` are consumed, it returns multiple results in the order like `[]`, `[x1]`, `[x1, x2]`, and `[x1, x2, x3]`.
     - Never fails.
   - [list(x, d)](./parsec/list.md).
     - Equivalent to `seq(x, rep(kright(d, x)))`.
