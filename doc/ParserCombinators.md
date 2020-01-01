@@ -81,11 +81,11 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
 - Left Recursive
   - [lrec(a, b, f)](./parsec/lrec.md):
     - Equivalent to `seq(a, rep(b))`.
-    - Returns the result of `f(f(f(a, b1), b2), b3) ...`. If no `b` succeeds, it returns `a`, which requies `Ta` should be compatible with the return type of `f`.
+    - Returns the result of `f(f(f(a, b1), b2), b3) ...`. If no `b` succeeds, it returns `a`, which requires `Ta` should be compatible with the return type of `f`.
     - Fails if `a` fails.
   - [lrec_sc(a,b,f)](./parsec/lrec_sc.md):
     - Equivalent to `seq(a, rep_sc(b)))`.
-    - Returns the result of `f(f(f(a, b1), b2), b3) ...`. If no `b` succeeds, it returns `a`, which requies `Ta` should be compatible with the return type of `f`.
+    - Returns the result of `f(f(f(a, b1), b2), b3) ...`. If no `b` succeeds, it returns `a`, which requires `Ta` should be compatible with the return type of `f`.
     - Fails if `a` fails.
 - Ambiguity Resolving
   - [amb(x)](./parsec/amb.md):
