@@ -27,9 +27,9 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
     - Consumes a token whose `kind` is `x`. If you use `buildLexer`, these values of `x` is put in the 3rd place in each line.
     - Returns `Token<T>`.
     - Fails if the current token could not be consumed.
-- Sequencial
+- Sequential
   - [seq(a, b, c)](./parsec/seq.md):
-    - Consumes tokens that matches `a`, `b` and then `c` in order. You could put 2-16 arguments in `seq`.
+    - Consumes tokens that matches `a`, `b` and then `c` in order. You could put 2–16 arguments in `seq`.
     - Returns `[Ta, Tb, Tc]`.
     - Fails if **one of** `a`, `b` and `c` fails.
   - [kleft(a, b)](./parsec/kleft.md):
@@ -46,7 +46,7 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
     - Fails if **one of** `a` and `b` fails.
 - Alternative
   - [alt(a, b, c)](./parsec/alt.md):
-    - Consumes tokens that matches `a`, `b` or `c`. You could put 2-16 arguments in `alt`.
+    - Consumes tokens that matches `a`, `b` or `c`. You could put 2–16 arguments in `alt`.
     - Returns `Ta | Tb | Tc`.
     - Fails if **all of** `a`, `b` or `c` fails.
   - [opt_sc(x)](./parsec/opt_sc.md):
@@ -57,7 +57,7 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
     - Equivalent to `x | nil<T>()`.
     - returns `Tx | undefined`.
     - Never fails.
-- Repeative
+- Repetitive
   - [rep_sc(x)](./parsec/rep_sc.md):
     - Consumes as many `x` as possible.
     - Returns `Tx[]`. If no `x` could be consumed, it returns `[]`.
