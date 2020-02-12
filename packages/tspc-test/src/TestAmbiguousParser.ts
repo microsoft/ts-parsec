@@ -90,3 +90,14 @@ test(`Parser: 1+2`, () => {
         assert.strictEqual(result[0].nextToken, undefined);
     }
 });
+
+test(`Parser: 1+2+3`, () => {
+    const firstToken = notUndefined(lexer.parse(`1+2+3`));
+    {
+        const result = succeeded(expr.parse(firstToken));
+        assert.strictEqual(result.length, 1);
+        assert.strictEqual(result[0].result, '[(1 . (+ [(2 . (+ 3)), (2 + 3)])), (1 + [(2 . (+ 3)), (2 + 3)])]');
+        assert.strictEqual(result[0].firstToken, firstToken);
+        assert.strictEqual(result[0].nextToken, undefined);
+    }
+});
