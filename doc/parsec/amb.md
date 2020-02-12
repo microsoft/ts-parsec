@@ -25,7 +25,7 @@ this is a waste of time and memory.
 We limit the ambiguity inside a big AST in this way.
 The only requirement is that,
 you need to express ambiguity in the type of your AST,
-and then you will be offered a chance to perform deambiguity on your AST.
+and then you will be offered a chance to resolve ambiguity on your AST.
 
 Another example is the C programming language. Consider the following function:
 
