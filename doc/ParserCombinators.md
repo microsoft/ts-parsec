@@ -87,11 +87,22 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
     - Equivalent to `seq(a, rep_sc(b)))`.
     - Returns the result of `f(f(f(a, b1), b2), b3) ...`. If no `b` succeeds, it returns `a`, which requies `Ta` should be compatible with the return type of `f`.
     - Fails if `a` fails.
+- Ambiguity Resolving
+  - [amb(x)](./parsec/amb.md):
+    - Consumes x and merge group result by consumed tokens.
+    - Returns `Tx[]`.
+    - Fails if `x` fails.
 - Others
   - [apply(x, f)](./parsec/apply.md):
     - Equivalent to `x`.
     - Returns the result of function `f`. The function will be called against the result of `x`, if `x` succeeds.
     - Fails if `x` fails.
+
+## Ambiguity
+
+Ambiguity is very common and we may not be able to design a syntax without context-free ambiguity (e.g. the C programming language).
+
+`amb` allows you to limit the ambiguity inside an AST, and you will be able to resolve it after parsing. You don't need to mix parsing and semantic analyzing like traditional C compilers.
 
 ## Recursive Syntax
 

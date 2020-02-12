@@ -57,7 +57,6 @@ Please read [Getting Started](./doc/GettingStarted.md) for ramping up, or our [d
 Following combinators will be released soon:
 
 - **err**: Manually offering an error information and a way to do recovering when a specified parser fails.
-- **amb**: Resolving ambiguity by merging multiple ways of result to a single one. If a parser produces an AST, the AST need to be well structured to handle it.
 - A context sensitive **apply** combinator.
 
 Context sensitive tokenizer is also comming.
