@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/microsoft/ts-parsec#readme",
   "dependencies": {
-    "typescript-parsec": "^0.3.0"
+    "typescript-parsec": "^0.3.1"
   },
   "devDependencies": {
     "@types/jest": "^24.0.17",
