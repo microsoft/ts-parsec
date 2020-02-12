@@ -7,7 +7,7 @@
 import * as assert from 'assert';
 import * as parsec from 'typescript-parsec';
 import { buildLexer, Token } from 'typescript-parsec';
-import { amb, alt, apply, kright, rule, seq, str, tok } from 'typescript-parsec';
+import { alt, amb, apply, kright, rule, seq, str, tok } from 'typescript-parsec';
 
 function notUndefined<T>(t: T | undefined): T {
     assert.notStrictEqual(t, undefined);
@@ -33,15 +33,18 @@ const lexer = buildLexer([
     [false, /^\s+/g, TokenKind.Space]
 ]);
 
-var expr = rule<TokenKind, string>();
+const expr = rule<TokenKind, string>();
 expr.setPattern(
-    amb(
-        alt(
-            apply(tok(TokenKind.Number), (t: Token<TokenKind>) => t.text),
-            apply(kright(str('+'), expr), (s: string) => `(+ ${s})`),
-            apply(seq(expr, kright(str('+'), expr)), ([s, t]: [string, string]) => `(${s} + ${t})`),
-            apply(seq(expr, expr), ([s, t]: [string, string]) => `(${s} . ${t})`)
-        )
+    apply(
+        amb(
+            alt(
+                apply(tok(TokenKind.Number), (t: Token<TokenKind>) => t.text),
+                apply(kright(str('+'), expr), (s: string) => `(+ ${s})`),
+                apply(seq(expr, kright(str('+'), expr)), ([s, t]: [string, string]) => `(${s} + ${t})`),
+                apply(seq(expr, expr), ([s, t]: [string, string]) => `(${s} . ${t})`)
+            )
+        ),
+        (ss: string[]) => ss.length === 1 ? ss[0] : `[${ss.join(', ')}]`
     )
 );
 
@@ -50,10 +53,7 @@ test(`Parser: 1+2`, () => {
     {
         const result = succeeded(expr.parse(firstToken));
         assert.strictEqual(result.length, 1);
-        assert.deepStrictEqual(result[0].result, [
-            '(1 + 2)',
-            '(1 . (+ 2))',
-        ]);
+        assert.strictEqual(result[0].result, '[(1 + 2), (1 . (+ 2))]');
         assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, undefined);
     }

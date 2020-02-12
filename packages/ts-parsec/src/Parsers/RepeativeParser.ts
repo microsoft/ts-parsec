@@ -13,7 +13,7 @@ import { seq } from './SequencialParser';
 export function rep<TKind, TResult>(p: Parser<TKind, TResult>): Parser<TKind, TResult[]> {
     const reprParser = repr(p);
     return {
-        parse(token: Token<TKind>): ParserOutput<TKind, TResult[]> {
+        parse(token: Token<TKind> | undefined): ParserOutput<TKind, TResult[]> {
             const output = reprParser.parse(token);
             if (output.successful) {
                 return {
@@ -30,7 +30,7 @@ export function rep<TKind, TResult>(p: Parser<TKind, TResult>): Parser<TKind, TR
 
 export function rep_sc<TKind, TResult>(p: Parser<TKind, TResult>): Parser<TKind, TResult[]> {
     return {
-        parse(token: Token<TKind>): ParserOutput<TKind, TResult[]> {
+        parse(token: Token<TKind> | undefined): ParserOutput<TKind, TResult[]> {
             let error: ParseError | undefined;
             let result: ParseResult<TKind, TResult[]>[] = [{ firstToken: token, nextToken: token, result: [] }];
 
@@ -66,7 +66,7 @@ export function rep_sc<TKind, TResult>(p: Parser<TKind, TResult>): Parser<TKind,
 
 export function repr<TKind, TResult>(p: Parser<TKind, TResult>): Parser<TKind, TResult[]> {
     return {
-        parse(token: Token<TKind>): ParserOutput<TKind, TResult[]> {
+        parse(token: Token<TKind> | undefined): ParserOutput<TKind, TResult[]> {
             let error: ParseError | undefined;
             const result: ParseResult<TKind, TResult[]>[] = [{ firstToken: token, nextToken: token, result: [] }];
 

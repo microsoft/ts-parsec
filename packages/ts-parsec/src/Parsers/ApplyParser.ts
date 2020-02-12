@@ -7,7 +7,7 @@ import { seq } from './SequencialParser';
 
 export function apply<TKind, TFrom, TTo>(p: Parser<TKind, TFrom>, callback: (value: TFrom, tokenRange: [Token<TKind> | undefined, Token<TKind> | undefined]) => TTo): Parser<TKind, TTo> {
     return {
-        parse(token: Token<TKind>): ParserOutput<TKind, TTo> {
+        parse(token: Token<TKind> | undefined): ParserOutput<TKind, TTo> {
             const output = p.parse(token);
             if (output.successful) {
                 return {
