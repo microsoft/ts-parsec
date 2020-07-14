@@ -1,10 +1,27 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { Parser } from './ParserInterface';
+import { Token } from '../Lexer';
+import { Parser, ParserOutput } from './ParserInterface';
 
 export function err<TKind, TResult>(p: Parser<TKind, TResult>, errorMessage: string): Parser<TKind, TResult> {
-    throw new Error('Not implemented!');
+    return {
+        parse(token: Token<TKind> | undefined): ParserOutput<TKind, TResult> {
+            const branches = p.parse(token);
+            if (branches.successful) {
+                return branches;
+            }
+
+            return {
+                successful: false,
+                error: {
+                    kind: 'Error',
+                    pos: branches.error.pos,
+                    message: errorMessage
+                }
+            };
+        }
+    };
 }
 
 export function errd<TKind, TResult>(p: Parser<TKind, TResult>, errorMessage: string, defaultValue: TResult): Parser<TKind, TResult> {
