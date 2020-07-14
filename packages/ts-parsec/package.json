@@ -1,6 +1,6 @@
 {
   "name": "typescript-parsec",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "TypeScript Parser Combinator",
   "private": false,
   "main": "./lib/index.js",
