@@ -25,5 +25,26 @@ export function err<TKind, TResult>(p: Parser<TKind, TResult>, errorMessage: str
 }
 
 export function errd<TKind, TResult>(p: Parser<TKind, TResult>, errorMessage: string, defaultValue: TResult): Parser<TKind, TResult> {
-    throw new Error('Not implemented!');
+    return {
+        parse(token: Token<TKind> | undefined): ParserOutput<TKind, TResult> {
+            const branches = p.parse(token);
+            if (branches.successful) {
+                return branches;
+            }
+
+            return {
+                successful: true,
+                candidates: [{
+                    firstToken: token,
+                    nextToken: token,
+                    result: defaultValue
+                }],
+                error: {
+                    kind: 'Error',
+                    pos: branches.error.pos,
+                    message: errorMessage
+                }
+            };
+        }
+    };
 }

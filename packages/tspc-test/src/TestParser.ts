@@ -244,8 +244,8 @@ test(`Parser: errd`, () => {
             assert.strictEqual(result.candidates.length, 1);
             assert.strictEqual(result.candidates[0].result, 1024);
             assert.strictEqual(result.candidates[0].firstToken, firstToken);
-            assert.strictEqual(result.candidates[0].nextToken, firstToken.next);
-            assert.strictEqual(result.error, {
+            assert.strictEqual(result.candidates[0].nextToken, firstToken);
+            assert.deepStrictEqual(result.error, {
                 kind: 'Error',
                 pos: firstToken.pos,
                 message: 'This is not a number!'
