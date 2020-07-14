@@ -10,4 +10,5 @@ export * from './Parsers/OptionalParser';
 export * from './Parsers/RepeativeParser';
 export * from './Parsers/ApplyParser';
 export * from './Parsers/AmbiguousParser';
+export * from './Parsers/ErrorParser';
 export * from './Parsers/Rule';

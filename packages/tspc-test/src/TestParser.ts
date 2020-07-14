@@ -7,7 +7,7 @@
 import * as assert from 'assert';
 import * as parsec from 'typescript-parsec';
 import { buildLexer, Token } from 'typescript-parsec';
-import { alt, apply, kleft, kmid, kright, opt, opt_sc, rep, rep_sc, repr, seq, str, tok } from 'typescript-parsec';
+import { alt, apply, errd, kleft, kmid, kright, opt, opt_sc, rep, rep_sc, repr, seq, str, tok } from 'typescript-parsec';
 
 function notUndefined<T>(t: T | undefined): T {
     assert.notStrictEqual(t, undefined);
@@ -223,5 +223,33 @@ test(`Parser: apply`, () => {
         assert.strictEqual(result[2].result, '123;456');
         assert.strictEqual(result[2].firstToken, firstToken);
         assert.strictEqual(result[2].nextToken, undefined);
+    }
+});
+
+test(`Parser: errd`, () => {
+    const firstToken = notUndefined(lexer.parse(`a`));
+    {
+        const result =
+            errd(
+                apply(
+                    tok(TokenKind.Number),
+                    (value: Token<TokenKind>) => +value.text
+                ),
+                'This is not a number!',
+                1024
+            ).parse(firstToken);
+
+        assert.strictEqual(result.successful, true);
+        if (result.successful) {
+            assert.strictEqual(result.candidates.length, 1);
+            assert.strictEqual(result.candidates[0].result, 1024);
+            assert.strictEqual(result.candidates[0].firstToken, firstToken);
+            assert.strictEqual(result.candidates[0].nextToken, firstToken.next);
+            assert.strictEqual(result.error, {
+                kind: 'Error',
+                pos: firstToken.pos,
+                message: 'This is not a number!'
+            });
+        }
     }
 });

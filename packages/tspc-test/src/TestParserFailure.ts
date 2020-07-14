@@ -7,7 +7,7 @@
 import * as assert from 'assert';
 import * as parsec from 'typescript-parsec';
 import { buildLexer, expectEOF, unableToConsumeToken } from 'typescript-parsec';
-import { alt, apply, opt_sc, rep, rep_sc, seq, tok } from 'typescript-parsec';
+import { alt, apply, err, opt_sc, rep, rep_sc, seq, tok } from 'typescript-parsec';
 
 function notUndefined<T>(t: T | undefined): T {
     assert.notStrictEqual(t, undefined);
@@ -54,6 +54,8 @@ test(`Failure: alt`, () => {
         const firstToken = notUndefined(lexer.parse(`123,456`));
         const output = alt(tok(TokenKind.Comma), tok(TokenKind.Space))
             .parse(firstToken);
+
+        assert.strictEqual(output.successful, false);
         assertError(output, unableToConsumeToken(walkToken(firstToken, 0)));
     }
 });
@@ -63,12 +65,16 @@ test(`Failure: seq`, () => {
         const firstToken = notUndefined(lexer.parse(`123,456`));
         const output = seq(tok(TokenKind.Identifier), tok(TokenKind.Number))
             .parse(firstToken);
+
+        assert.strictEqual(output.successful, false);
         assertError(output, unableToConsumeToken(walkToken(firstToken, 0)));
     }
     {
         const firstToken = notUndefined(lexer.parse(`123,456`));
         const output = seq(tok(TokenKind.Number), tok(TokenKind.Identifier))
             .parse(firstToken);
+
+        assert.strictEqual(output.successful, false);
         assertError(output, unableToConsumeToken(walkToken(firstToken, 1)));
     }
 });
@@ -78,6 +84,8 @@ test(`Failure: apply`, () => {
         const firstToken = notUndefined(lexer.parse(`123,456`));
         const output = apply(tok(TokenKind.Comma), (value: parsec.Token<TokenKind.Comma>) => { return undefined; })
             .parse(firstToken);
+
+        assert.strictEqual(output.successful, false);
         assertError(output, unableToConsumeToken(walkToken(firstToken, 0)));
     }
 });
@@ -143,4 +151,17 @@ test(`Failure: rep_sc + opt`, () => {
         const expectedError = unableToConsumeToken(walkToken(firstToken, 7));
         assertError(output, expectedError);
     }
+});
+
+test(`Failure: err`, () => {
+    const firstToken = notUndefined(lexer.parse(`a`));
+    const output = err(tok(TokenKind.Number), 'This is not a number!')
+        .parse(firstToken);
+
+    assert.strictEqual(output.successful, false);
+    assertError(output, {
+        kind: 'Error',
+        pos: walkToken(firstToken, 0)?.pos,
+        message: 'This is not a number!'
+    });
 });

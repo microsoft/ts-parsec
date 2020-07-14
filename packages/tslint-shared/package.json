@@ -15,7 +15,7 @@
   "homepage": "https://github.com/microsoft/ts-parsec#readme",
   "devDependencies": {
     "tslint": "^5.18.0",
-    "typescript": "^3.5.3",
+    "typescript": "^3.9.6",
     "tslint-microsoft-contrib": "^6.2.0"
   }
 }
