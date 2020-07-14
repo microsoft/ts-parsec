@@ -92,6 +92,15 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
     - Consumes x and merge group result by consumed tokens.
     - Returns `Tx[]`.
     - Fails if `x` fails.
+- Error Recovering
+  - [err(x, e)](./parsec/err.md):
+    - Consumes `x`.
+    - When `x` fails, the error message is replaced by e.
+  - [errd(x, e, v)](./parsec/errd.md):
+    - Consumes `x`.
+    - When `x` fails, the error message is replaced by e.
+    - Returns `Tx`. It returns `v` only if `x` fails.
+    - Never fails.
 - Others
   - [apply(x, f)](./parsec/apply.md):
     - Equivalent to `x`.
