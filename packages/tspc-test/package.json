@@ -31,6 +31,7 @@
   },
   "jest": {
     "testRegex": "/lib/Test.*\\.js",
-    "verbose": true
+    "verbose": true,
+    "testEnvironment": "node"
   }
 }

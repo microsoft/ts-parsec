@@ -12,3 +12,5 @@ export * from './Parsers/ApplyParser';
 export * from './Parsers/AmbiguousParser';
 export * from './Parsers/ErrorParser';
 export * from './Parsers/Rule';
+export * from './Parsers/LazyParser';
+export * from './Parsers/ParserModule';
