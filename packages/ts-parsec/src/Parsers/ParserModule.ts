@@ -7,14 +7,6 @@
 import { lazy } from './LazyParser';
 import type { Parser } from './ParserInterface';
 
-export type ParserDefinition<TKind, TResult> = <
-    TParserModule extends Record<string, (m: any) => Parser<TKind, TResult>>
->(
-    m: {
-        [K in keyof TParserModule]: Parser<TKind, TResult>;
-    }
-) => Parser<TKind, TResult>;
-
 const defineReadOnly = <Target, Value>(
     target: Target,
     propName: string | number | symbol,
