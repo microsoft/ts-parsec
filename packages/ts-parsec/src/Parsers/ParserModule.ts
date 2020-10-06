@@ -8,34 +8,35 @@ import { lazy } from './LazyParser';
 import type { Parser } from './ParserInterface';
 
 const defineReadOnly = <Target, Value>(
-    target: Target,
-    propName: string | number | symbol,
-    value: Value
+  target: Target,
+  propName: string | number | symbol,
+  value: Value
 ): Target & { readonly [name in typeof propName]: Value } =>
-    <Target & { readonly [name in typeof propName]: Value }>Object.defineProperty(target, propName, {
-        configurable: true,
-        writable: false,
-        enumerable: true,
-        value
-    });
+  <Target & { readonly [name in typeof propName]: Value }>Object.defineProperty(
+    target,
+    propName,
+    {
+      configurable: true,
+      writable: false,
+      enumerable: true,
+      value
+    }
+  );
 
 export function makeParserModule<TKind, TResult>(
-    definitions: Record<
-        string,
-        (
-            m: {
-                [K in keyof typeof definitions]: Parser<TKind, TResult>;
-            }
-        ) => Parser<TKind, TResult>
-    >,
-    entry: (
-        m: {
-            [K in keyof typeof definitions]: Parser<TKind, TResult>;
-        }
+  definitions: Record<
+    string,
+    (
+      m: {
+        [K in keyof typeof definitions]: Parser<TKind, TResult>;
+      }
     ) => Parser<TKind, TResult>
-): Parser<TKind, TResult> {
+  >
+): {
+  [K in keyof typeof definitions]: ReturnType<typeof definitions[K]>;
+} {
   let parserModule = <
-    { [K in keyof typeof definitions]: Parser<TKind, TResult> }
+    { [K in keyof typeof definitions]: ReturnType<typeof definitions[K]> }
   >Object.create(null);
   /*
    * building a module for the mutually dependent parsers
@@ -48,13 +49,5 @@ export function makeParserModule<TKind, TResult>(
       lazy(() => parserThunk(parserModule))
     );
   }
-
-  /*
-   * we pass the module to the entry function.
-   * It is basically just a selector/getter for the entry/root parser.
-   *
-   * This way we can treat the inner parsers as an implementation detail
-   * and expose just a single plain parser as the interface to our parser module
-   */
-  return entry(parserModule);
+  return parserModule;
 }

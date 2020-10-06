@@ -93,12 +93,11 @@ const parserModule = makeParserModule(
         EXP(m: { FACTOR: Parser<TokenKind, number> }): Parser<TokenKind, number> {
             return lrec_sc(m.FACTOR, seq(alt(str('+'), str('-')), m.FACTOR), applyBinary);
         }
-    },
-    (m: { EXP: Parser<TokenKind, number> }): Parser<TokenKind, number> => m.EXP
+    }
 );
 
 function evaluate(expr: string): number {
-    return expectSingleResult(expectEOF(parserModule.parse(lexer.parse(expr))));
+    return expectSingleResult(expectEOF(parserModule.EXP.parse(lexer.parse(expr))));
 }
 
 test(`Parser: calculator`, () => {
