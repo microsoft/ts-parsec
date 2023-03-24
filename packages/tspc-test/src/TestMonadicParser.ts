@@ -7,7 +7,7 @@
 import * as assert from 'assert';
 import * as parsec from 'typescript-parsec';
 import { buildLexer, rep_n, Token } from 'typescript-parsec';
-import { apply, combine, fail, kright, rule, str, tok } from 'typescript-parsec';
+import { apply, combine, fail, kright, rule, seq, str, tok } from 'typescript-parsec';
 
 function notUndefined<T>(t: T | undefined): T {
     assert.notStrictEqual(t, undefined);
@@ -70,7 +70,7 @@ NAME_LIST.setPattern(
                         NAME,
                         rep_n(kright(str(','), NAME), count)
                     ),
-                    (first: string, tail: string[]) => [first, ...tail]
+                    ([first, tail]: [string, string[]]) => [first, ...tail]
                 );
             }
         }
