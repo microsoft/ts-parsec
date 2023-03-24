@@ -20,6 +20,21 @@ export function nil<T>(): Parser<T, undefined> {
     };
 }
 
+export function fail<R, T>(errorMessage: string): Parser<T, R> {
+    return {
+        parse(token: Token<T> | undefined): ParserOutput<T, R> {
+            return {
+                successful: false,
+                error: {
+                    kind: 'Error',
+                    pos: token?.pos,
+                    message: errorMessage
+                }
+            };
+        }
+    };
+}
+
 export function str<T>(toMatch: string): Parser<T, Token<T>> {
     return {
         parse(token: Token<T> | undefined): ParserOutput<T, Token<T>> {
