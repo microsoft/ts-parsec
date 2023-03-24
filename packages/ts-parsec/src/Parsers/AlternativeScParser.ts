@@ -199,11 +199,13 @@ export function alt_sc(...ps: Parser<void, {}>[]): Parser<void, {}> {
                 error = betterError(error, output.error);
 
                 if (output.successful) {
-                    result = result.concat(output.candidates);
-                    successful = true;
+                    return output;
                 }
             }
-            return resultOrError(result, error, successful);
+            return {
+                successful: false,
+                error: <ParseError>error
+            };
         }
     };
 }
