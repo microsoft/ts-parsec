@@ -6,9 +6,10 @@
 // tslint:disable:prefer-for-of
 
 import { Token } from '../Lexer';
-import { apply } from './ApplyParser';
+import { apply, kright } from './ApplyParser';
 import { betterError, ParseError, Parser, ParseResult, ParserOutput, resultOrError } from './ParserInterface';
 import { seq } from './SequencialParser';
+import { succ } from './TokenParser';
 
 export function rep<TKind, TResult>(p: Parser<TKind, TResult>): Parser<TKind, TResult[]> {
     const reprParser = repr(p);
@@ -129,16 +130,26 @@ export function rep_n<TKind, TResult>(p: Parser<TKind, TResult>, count: number):
     };
 }
 
-function applyList<TResult, TSeparator>(value: [TResult, [TSeparator, TResult][]]): TResult[] {
-    return [value[0]].concat(value[1].map((pair: [TSeparator, TResult]) => { return pair[1]; }));
+function applyList<TResult, TSeparator>([first, tail]: [TResult, TResult[]]): TResult[] {
+    return [first, ...tail];
 }
 
 export function list<TKind, TResult, TSeparator>(p: Parser<TKind, TResult>, s: Parser<TKind, TSeparator>): Parser<TKind, TResult[]> {
-    return apply(seq(p, rep(seq(s, p))), applyList);
+    return apply(seq(p, rep(kright(s, p))), applyList);
 }
 
 export function list_sc<TKind, TResult, TSeparator>(p: Parser<TKind, TResult>, s: Parser<TKind, TSeparator>): Parser<TKind, TResult[]> {
-    return apply(seq(p, rep_sc(seq(s, p))), applyList);
+    return apply(seq(p, rep_sc(kright(s, p))), applyList);
+}
+
+export function list_n<TKind, TResult, TSeparator>(p: Parser<TKind, TResult>, s: Parser<TKind, TSeparator>, count: number): Parser<TKind, TResult[]> {
+    if (count < 1) {
+        return succ<TKind, TResult[]>([]);
+    } else if (count === 1) {
+        return apply(p, (value: TResult) => [value]);
+    } else {
+        return apply(seq(p, rep_n(kright(s, p), count - 1)), applyList);
+    }
 }
 
 function applyLrec<TResult, TFirst extends TResult, TSecond>(callback: (a: TResult, b: TSecond) => TResult): (value: [TFirst, TSecond[]]) => TResult {

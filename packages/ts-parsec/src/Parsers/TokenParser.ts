@@ -20,6 +20,22 @@ export function nil<T>(): Parser<T, undefined> {
     };
 }
 
+export function succ<T, R>(value: R): Parser<T, R> {
+    return {
+        parse(token: Token<T> | undefined): ParserOutput<T, R> {
+            return {
+                candidates: [{
+                    firstToken: token,
+                    nextToken: token,
+                    result: value
+                }],
+                successful: true,
+                error: undefined
+            };
+        }
+    };
+}
+
 export function fail<R>(errorMessage: string): FailedParser<R> {
     return {
         parse(token: Token<unknown> | undefined): FailedParserOutput<R> {

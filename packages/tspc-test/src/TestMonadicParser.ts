@@ -6,8 +6,8 @@
 
 import * as assert from 'assert';
 import * as parsec from 'typescript-parsec';
-import { buildLexer, rep_n, Token } from 'typescript-parsec';
-import { apply, combine, fail, kright, rule, seq, str, tok } from 'typescript-parsec';
+import { buildLexer, Token } from 'typescript-parsec';
+import { apply, combine, fail, list_n, rule, str, tok } from 'typescript-parsec';
 
 function notUndefined<T>(t: T | undefined): T {
     assert.notStrictEqual(t, undefined);
@@ -59,19 +59,8 @@ NAME_LIST.setPattern(
         (count: number) => {
             if (count < 1) {
                 return fail<string[]>('The number of names must be at least 1.');
-            } else if (count === 1) {
-                return apply(
-                    NAME,
-                    (value: string) => [value]
-                );
             } else {
-                return apply(
-                    seq(
-                        NAME,
-                        rep_n(kright(str(','), NAME), count)
-                    ),
-                    ([first, tail]: [string, string[]]) => [first, ...tail]
-                );
+                return list_n(NAME, str(','), count);
             }
         }
     )
