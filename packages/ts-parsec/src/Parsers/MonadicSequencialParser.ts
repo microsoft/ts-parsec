@@ -8,182 +8,182 @@ import { betterError, ParseError, Parser, ParseResult, ParserOutput, resultOrErr
 
 export function combine<TKind, T1, T2>(
     p1: Parser<TKind, T1>,
-    p2: (value : T1) => Parser<TKind, T2>
+    p2: (value: T1) => Parser<TKind, T2>
 ): Parser<TKind, T2>;
 
 export function combine<TKind, T1, T2, T3>(
     p1: Parser<TKind, T1>,
-    p2: (value : T1) => Parser<TKind, T2>,
-    p3: (value : T2) => Parser<TKind, T3>
+    p2: (value: T1) => Parser<TKind, T2>,
+    p3: (value: T2) => Parser<TKind, T3>
 ): Parser<TKind, T3>;
 
 export function combine<TKind, T1, T2, T3, T4>(
     p1: Parser<TKind, T1>,
-    p2: (value : T1) => Parser<TKind, T2>,
-    p3: (value : T2) => Parser<TKind, T3>,
-    p4: (value : T3) => Parser<TKind, T4>
+    p2: (value: T1) => Parser<TKind, T2>,
+    p3: (value: T2) => Parser<TKind, T3>,
+    p4: (value: T3) => Parser<TKind, T4>
 ): Parser<TKind, T4>;
 
 export function combine<TKind, T1, T2, T3, T4, T5>(
     p1: Parser<TKind, T1>,
-    p2: (value : T1) => Parser<TKind, T2>,
-    p3: (value : T2) => Parser<TKind, T3>,
-    p4: (value : T3) => Parser<TKind, T4>,
-    p5: (value : T4) => Parser<TKind, T5>
+    p2: (value: T1) => Parser<TKind, T2>,
+    p3: (value: T2) => Parser<TKind, T3>,
+    p4: (value: T3) => Parser<TKind, T4>,
+    p5: (value: T4) => Parser<TKind, T5>
 ): Parser<TKind, T5>;
 
 export function combine<TKind, T1, T2, T3, T4, T5, T6>(
     p1: Parser<TKind, T1>,
-    p2: (value : T1) => Parser<TKind, T2>,
-    p3: (value : T2) => Parser<TKind, T3>,
-    p4: (value : T3) => Parser<TKind, T4>,
-    p5: (value : T4) => Parser<TKind, T5>,
-    p6: (value : T5) => Parser<TKind, T6>
+    p2: (value: T1) => Parser<TKind, T2>,
+    p3: (value: T2) => Parser<TKind, T3>,
+    p4: (value: T3) => Parser<TKind, T4>,
+    p5: (value: T4) => Parser<TKind, T5>,
+    p6: (value: T5) => Parser<TKind, T6>
 ): Parser<TKind, T6>;
 
 export function combine<TKind, T1, T2, T3, T4, T5, T6, T7>(
     p1: Parser<TKind, T1>,
-    p2: (value : T1) => Parser<TKind, T2>,
-    p3: (value : T2) => Parser<TKind, T3>,
-    p4: (value : T3) => Parser<TKind, T4>,
-    p5: (value : T4) => Parser<TKind, T5>,
-    p6: (value : T5) => Parser<TKind, T6>,
-    p7: (value : T6) => Parser<TKind, T7>
+    p2: (value: T1) => Parser<TKind, T2>,
+    p3: (value: T2) => Parser<TKind, T3>,
+    p4: (value: T3) => Parser<TKind, T4>,
+    p5: (value: T4) => Parser<TKind, T5>,
+    p6: (value: T5) => Parser<TKind, T6>,
+    p7: (value: T6) => Parser<TKind, T7>
 ): Parser<TKind, T7>;
 
 export function combine<TKind, T1, T2, T3, T4, T5, T6, T7, T8>(
     p1: Parser<TKind, T1>,
-    p2: (value : T1) => Parser<TKind, T2>,
-    p3: (value : T2) => Parser<TKind, T3>,
-    p4: (value : T3) => Parser<TKind, T4>,
-    p5: (value : T4) => Parser<TKind, T5>,
-    p6: (value : T5) => Parser<TKind, T6>,
-    p7: (value : T6) => Parser<TKind, T7>,
-    p8: (value : T7) => Parser<TKind, T8>
+    p2: (value: T1) => Parser<TKind, T2>,
+    p3: (value: T2) => Parser<TKind, T3>,
+    p4: (value: T3) => Parser<TKind, T4>,
+    p5: (value: T4) => Parser<TKind, T5>,
+    p6: (value: T5) => Parser<TKind, T6>,
+    p7: (value: T6) => Parser<TKind, T7>,
+    p8: (value: T7) => Parser<TKind, T8>
 ): Parser<TKind, T8>;
 
 export function combine<TKind, T1, T2, T3, T4, T5, T6, T7, T8, T9>(
     p1: Parser<TKind, T1>,
-    p2: (value : T1) => Parser<TKind, T2>,
-    p3: (value : T2) => Parser<TKind, T3>,
-    p4: (value : T3) => Parser<TKind, T4>,
-    p5: (value : T4) => Parser<TKind, T5>,
-    p6: (value : T5) => Parser<TKind, T6>,
-    p7: (value : T6) => Parser<TKind, T7>,
-    p8: (value : T7) => Parser<TKind, T8>,
-    p9: (value : T8) => Parser<TKind, T9>
+    p2: (value: T1) => Parser<TKind, T2>,
+    p3: (value: T2) => Parser<TKind, T3>,
+    p4: (value: T3) => Parser<TKind, T4>,
+    p5: (value: T4) => Parser<TKind, T5>,
+    p6: (value: T5) => Parser<TKind, T6>,
+    p7: (value: T6) => Parser<TKind, T7>,
+    p8: (value: T7) => Parser<TKind, T8>,
+    p9: (value: T8) => Parser<TKind, T9>
 ): Parser<TKind, T9>;
 
 export function combine<TKind, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
     p1: Parser<TKind, T1>,
-    p2: (value : T1) => Parser<TKind, T2>,
-    p3: (value : T2) => Parser<TKind, T3>,
-    p4: (value : T3) => Parser<TKind, T4>,
-    p5: (value : T4) => Parser<TKind, T5>,
-    p6: (value : T5) => Parser<TKind, T6>,
-    p7: (value : T6) => Parser<TKind, T7>,
-    p8: (value : T7) => Parser<TKind, T8>,
-    p9: (value : T8) => Parser<TKind, T9>,
-    p10: (value : T9) => Parser<TKind, T10>
+    p2: (value: T1) => Parser<TKind, T2>,
+    p3: (value: T2) => Parser<TKind, T3>,
+    p4: (value: T3) => Parser<TKind, T4>,
+    p5: (value: T4) => Parser<TKind, T5>,
+    p6: (value: T5) => Parser<TKind, T6>,
+    p7: (value: T6) => Parser<TKind, T7>,
+    p8: (value: T7) => Parser<TKind, T8>,
+    p9: (value: T8) => Parser<TKind, T9>,
+    p10: (value: T9) => Parser<TKind, T10>
 ): Parser<TKind, T10>;
 
 export function combine<TKind, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(
     p1: Parser<TKind, T1>,
-    p2: (value : T1) => Parser<TKind, T2>,
-    p3: (value : T2) => Parser<TKind, T3>,
-    p4: (value : T3) => Parser<TKind, T4>,
-    p5: (value : T4) => Parser<TKind, T5>,
-    p6: (value : T5) => Parser<TKind, T6>,
-    p7: (value : T6) => Parser<TKind, T7>,
-    p8: (value : T7) => Parser<TKind, T8>,
-    p9: (value : T8) => Parser<TKind, T9>,
-    p10: (value : T9) => Parser<TKind, T10>,
-    p11: (value : T10) => Parser<TKind, T11>
+    p2: (value: T1) => Parser<TKind, T2>,
+    p3: (value: T2) => Parser<TKind, T3>,
+    p4: (value: T3) => Parser<TKind, T4>,
+    p5: (value: T4) => Parser<TKind, T5>,
+    p6: (value: T5) => Parser<TKind, T6>,
+    p7: (value: T6) => Parser<TKind, T7>,
+    p8: (value: T7) => Parser<TKind, T8>,
+    p9: (value: T8) => Parser<TKind, T9>,
+    p10: (value: T9) => Parser<TKind, T10>,
+    p11: (value: T10) => Parser<TKind, T11>
 ): Parser<TKind, T11>;
 
 export function combine<TKind, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(
     p1: Parser<TKind, T1>,
-    p2: (value : T1) => Parser<TKind, T2>,
-    p3: (value : T2) => Parser<TKind, T3>,
-    p4: (value : T3) => Parser<TKind, T4>,
-    p5: (value : T4) => Parser<TKind, T5>,
-    p6: (value : T5) => Parser<TKind, T6>,
-    p7: (value : T6) => Parser<TKind, T7>,
-    p8: (value : T7) => Parser<TKind, T8>,
-    p9: (value : T8) => Parser<TKind, T9>,
-    p10: (value : T9) => Parser<TKind, T10>,
-    p11: (value : T10) => Parser<TKind, T11>,
-    p12: (value : T11) => Parser<TKind, T12>
+    p2: (value: T1) => Parser<TKind, T2>,
+    p3: (value: T2) => Parser<TKind, T3>,
+    p4: (value: T3) => Parser<TKind, T4>,
+    p5: (value: T4) => Parser<TKind, T5>,
+    p6: (value: T5) => Parser<TKind, T6>,
+    p7: (value: T6) => Parser<TKind, T7>,
+    p8: (value: T7) => Parser<TKind, T8>,
+    p9: (value: T8) => Parser<TKind, T9>,
+    p10: (value: T9) => Parser<TKind, T10>,
+    p11: (value: T10) => Parser<TKind, T11>,
+    p12: (value: T11) => Parser<TKind, T12>
 ): Parser<TKind, T12>;
 
 export function combine<TKind, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(
     p1: Parser<TKind, T1>,
-    p2: (value : T1) => Parser<TKind, T2>,
-    p3: (value : T2) => Parser<TKind, T3>,
-    p4: (value : T3) => Parser<TKind, T4>,
-    p5: (value : T4) => Parser<TKind, T5>,
-    p6: (value : T5) => Parser<TKind, T6>,
-    p7: (value : T6) => Parser<TKind, T7>,
-    p8: (value : T7) => Parser<TKind, T8>,
-    p9: (value : T8) => Parser<TKind, T9>,
-    p10: (value : T9) => Parser<TKind, T10>,
-    p11: (value : T10) => Parser<TKind, T11>,
-    p12: (value : T11) => Parser<TKind, T12>,
-    p13: (value : T12) => Parser<TKind, T13>
+    p2: (value: T1) => Parser<TKind, T2>,
+    p3: (value: T2) => Parser<TKind, T3>,
+    p4: (value: T3) => Parser<TKind, T4>,
+    p5: (value: T4) => Parser<TKind, T5>,
+    p6: (value: T5) => Parser<TKind, T6>,
+    p7: (value: T6) => Parser<TKind, T7>,
+    p8: (value: T7) => Parser<TKind, T8>,
+    p9: (value: T8) => Parser<TKind, T9>,
+    p10: (value: T9) => Parser<TKind, T10>,
+    p11: (value: T10) => Parser<TKind, T11>,
+    p12: (value: T11) => Parser<TKind, T12>,
+    p13: (value: T12) => Parser<TKind, T13>
 ): Parser<TKind, T13>;
 
 export function combine<TKind, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(
     p1: Parser<TKind, T1>,
-    p2: (value : T1) => Parser<TKind, T2>,
-    p3: (value : T2) => Parser<TKind, T3>,
-    p4: (value : T3) => Parser<TKind, T4>,
-    p5: (value : T4) => Parser<TKind, T5>,
-    p6: (value : T5) => Parser<TKind, T6>,
-    p7: (value : T6) => Parser<TKind, T7>,
-    p8: (value : T7) => Parser<TKind, T8>,
-    p9: (value : T8) => Parser<TKind, T9>,
-    p10: (value : T9) => Parser<TKind, T10>,
-    p11: (value : T10) => Parser<TKind, T11>,
-    p12: (value : T11) => Parser<TKind, T12>,
-    p13: (value : T12) => Parser<TKind, T13>,
-    p14: (value : T13) => Parser<TKind, T14>
+    p2: (value: T1) => Parser<TKind, T2>,
+    p3: (value: T2) => Parser<TKind, T3>,
+    p4: (value: T3) => Parser<TKind, T4>,
+    p5: (value: T4) => Parser<TKind, T5>,
+    p6: (value: T5) => Parser<TKind, T6>,
+    p7: (value: T6) => Parser<TKind, T7>,
+    p8: (value: T7) => Parser<TKind, T8>,
+    p9: (value: T8) => Parser<TKind, T9>,
+    p10: (value: T9) => Parser<TKind, T10>,
+    p11: (value: T10) => Parser<TKind, T11>,
+    p12: (value: T11) => Parser<TKind, T12>,
+    p13: (value: T12) => Parser<TKind, T13>,
+    p14: (value: T13) => Parser<TKind, T14>
 ): Parser<TKind, T14>;
 
 export function combine<TKind, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(
     p1: Parser<TKind, T1>,
-    p2: (value : T1) => Parser<TKind, T2>,
-    p3: (value : T2) => Parser<TKind, T3>,
-    p4: (value : T3) => Parser<TKind, T4>,
-    p5: (value : T4) => Parser<TKind, T5>,
-    p6: (value : T5) => Parser<TKind, T6>,
-    p7: (value : T6) => Parser<TKind, T7>,
-    p8: (value : T7) => Parser<TKind, T8>,
-    p9: (value : T8) => Parser<TKind, T9>,
-    p10: (value : T9) => Parser<TKind, T10>,
-    p11: (value : T10) => Parser<TKind, T11>,
-    p12: (value : T11) => Parser<TKind, T12>,
-    p13: (value : T12) => Parser<TKind, T13>,
-    p14: (value : T13) => Parser<TKind, T14>,
-    p15: (value : T14) => Parser<TKind, T15>
+    p2: (value: T1) => Parser<TKind, T2>,
+    p3: (value: T2) => Parser<TKind, T3>,
+    p4: (value: T3) => Parser<TKind, T4>,
+    p5: (value: T4) => Parser<TKind, T5>,
+    p6: (value: T5) => Parser<TKind, T6>,
+    p7: (value: T6) => Parser<TKind, T7>,
+    p8: (value: T7) => Parser<TKind, T8>,
+    p9: (value: T8) => Parser<TKind, T9>,
+    p10: (value: T9) => Parser<TKind, T10>,
+    p11: (value: T10) => Parser<TKind, T11>,
+    p12: (value: T11) => Parser<TKind, T12>,
+    p13: (value: T12) => Parser<TKind, T13>,
+    p14: (value: T13) => Parser<TKind, T14>,
+    p15: (value: T14) => Parser<TKind, T15>
 ): Parser<TKind, T15>;
 
 export function combine<TKind, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(
     p1: Parser<TKind, T1>,
-    p2: (value : T1) => Parser<TKind, T2>,
-    p3: (value : T2) => Parser<TKind, T3>,
-    p4: (value : T3) => Parser<TKind, T4>,
-    p5: (value : T4) => Parser<TKind, T5>,
-    p6: (value : T5) => Parser<TKind, T6>,
-    p7: (value : T6) => Parser<TKind, T7>,
-    p8: (value : T7) => Parser<TKind, T8>,
-    p9: (value : T8) => Parser<TKind, T9>,
-    p10: (value : T9) => Parser<TKind, T10>,
-    p11: (value : T10) => Parser<TKind, T11>,
-    p12: (value : T11) => Parser<TKind, T12>,
-    p13: (value : T12) => Parser<TKind, T13>,
-    p14: (value : T13) => Parser<TKind, T14>,
-    p15: (value : T14) => Parser<TKind, T15>,
-    p16: (value : T15) => Parser<TKind, T16>
+    p2: (value: T1) => Parser<TKind, T2>,
+    p3: (value: T2) => Parser<TKind, T3>,
+    p4: (value: T3) => Parser<TKind, T4>,
+    p5: (value: T4) => Parser<TKind, T5>,
+    p6: (value: T5) => Parser<TKind, T6>,
+    p7: (value: T6) => Parser<TKind, T7>,
+    p8: (value: T7) => Parser<TKind, T8>,
+    p9: (value: T8) => Parser<TKind, T9>,
+    p10: (value: T9) => Parser<TKind, T10>,
+    p11: (value: T10) => Parser<TKind, T11>,
+    p12: (value: T11) => Parser<TKind, T12>,
+    p13: (value: T12) => Parser<TKind, T13>,
+    p14: (value: T13) => Parser<TKind, T14>,
+    p15: (value: T14) => Parser<TKind, T15>,
+    p16: (value: T15) => Parser<TKind, T16>
 ): Parser<TKind, T16>;
 
 // CodegenOverloadings:End
