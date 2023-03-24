@@ -82,6 +82,32 @@ test(`Parser: alt`, () => {
         assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, firstToken.next);
     }
+    {
+        const firstToken = notUndefined(lexer.parse(`123,456`));
+        const alt1 = alt(tok(TokenKind.Number), tok(TokenKind.Identifier));
+        const alt2 = alt(tok(TokenKind.Identifier), tok(TokenKind.Number));
+        const result = succeeded(alt(alt1, alt2).parse(firstToken));
+        assert.strictEqual(result.length, 2);
+        assert.strictEqual(result[0].result.text, '123');
+        assert.strictEqual(result[0].firstToken, firstToken);
+        assert.strictEqual(result[0].nextToken, firstToken.next);
+        assert.strictEqual(result[1].result.text, '123');
+        assert.strictEqual(result[1].firstToken, firstToken);
+        assert.strictEqual(result[1].nextToken, firstToken.next);
+    }
+    {
+        const firstToken = notUndefined(lexer.parse(`abc,def`));
+        const alt1 = alt(tok(TokenKind.Number), tok(TokenKind.Identifier));
+        const alt2 = alt(tok(TokenKind.Identifier), tok(TokenKind.Number));
+        const result = succeeded(alt(alt1, alt2).parse(firstToken));
+        assert.strictEqual(result.length, 2);
+        assert.strictEqual(result[0].result.text, 'abc');
+        assert.strictEqual(result[0].firstToken, firstToken);
+        assert.strictEqual(result[0].nextToken, firstToken.next);
+        assert.strictEqual(result[1].result.text, 'abc');
+        assert.strictEqual(result[1].firstToken, firstToken);
+        assert.strictEqual(result[1].nextToken, firstToken.next);
+    }
 });
 
 test(`Parser: seq`, () => {
