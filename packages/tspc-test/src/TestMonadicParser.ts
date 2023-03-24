@@ -58,7 +58,7 @@ NAME_LIST.setPattern(
         COUNT,
         (count: number) => {
             if (count < 1) {
-                return fail<string[]>('The number of names must be at least 1.');
+                return fail<string[]>(`Illegal number of names: ${count}, it should >= 1.`);
             } else {
                 return list_n(NAME, str(','), count);
             }
@@ -71,7 +71,7 @@ test(`Parser: 0`, () => {
     {
         const output = NAME_LIST.parse(firstToken);
         assert.strictEqual(output.successful, false);
-        assert.strictEqual(output.error?.message, 'The number of names must be at least 1.');
+        assert.strictEqual(output.error?.message, 'Illegal number of names: 0, it should >= 1.');
     }
 });
 
