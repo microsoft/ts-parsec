@@ -19,6 +19,13 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
     - Consumes no token.
     - Returns `undefined`.
     - Never fails.
+  - [succ(value)](./parsec/succ.md):
+    - Consumes no token.
+    - Returns `value`.
+    - Never fails.
+  - [fail(errorMessage)](./parsec/fail.md):
+    - Consumes no token.
+    - Always fails.
   - [str('x')](./parsec/str.md):
     - Consumes a token that is `'x'`.
     - Returns `Token<T>`.
@@ -31,6 +38,10 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
   - [seq(a, b, c)](./parsec/seq.md):
     - Consumes tokens that matches `a`, `b` and then `c` in order. You could put 2–16 arguments in `seq`.
     - Returns `[Ta, Tb, Tc]`.
+    - Fails if **one of** `a`, `b` and `c` fails.
+  - [combine(a, (x)=>b, (x)=>c)](./parsec/combine.md):
+    - Consumes tokens that matches `a`, `b` and then `c` in order, when all parsers after `a` depend on the result of the previous parser. You could put 2-16 arguments in `combine`.
+    - Returns `Tc`.
     - Fails if **one of** `a`, `b` and `c` fails.
   - [kleft(a, b)](./parsec/kleft.md):
     - Equivalent to `seq(a, b)`.
@@ -86,6 +97,10 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
     - Equivalent to `seq(x, rep_sc(kright(d, x)))`.
     - Returns `Tx[]`, instead of `[Tx, Tx[]]`.
     - Fails if `x` succeeds zero times.
+  - [list_n(x,d,n)](./parsec/list_n.md):
+    - Equivalent to `opt_sc(seq(x, rep_n(kright(d, x), n - 1)))`.
+    - Returns `Tx[]`, instead of `[Tx, Tx[]] | undefined`.
+    - Fails if there is less than `n` times of `x`.
 - Left Recursive
   - [lrec(a, b, f)](./parsec/lrec.md):
     - Equivalent to `seq(a, rep(b))`.

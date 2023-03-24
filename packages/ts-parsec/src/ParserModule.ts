@@ -4,8 +4,16 @@
 // tslint:disable:no-null-keyword
 // tslint:disable:no-any
 
-import { lazy } from './LazyParser';
-import type { Parser } from './ParserInterface';
+import type { Token } from './Lexer';
+import type { Parser, ParserOutput } from './Parsers/ParserInterface';
+
+export function lazy<TKind, TResult>(thunk: () => Parser<TKind, TResult>): Parser<TKind, TResult> {
+  return {
+      parse(token: Token<TKind> | undefined): ParserOutput<TKind, TResult> {
+          return thunk().parse(token);
+      }
+  };
+}
 
 const defineReadOnly = <Target, Value>(
   target: Target,

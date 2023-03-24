@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import { Token } from '../Lexer';
-import { Parser, ParserOutput, unableToConsumeToken } from './ParserInterface';
+import { FailedParser, FailedParserOutput, Parser, ParserOutput, unableToConsumeToken } from './ParserInterface';
 
 export function nil<T>(): Parser<T, undefined> {
     return {
@@ -15,6 +15,37 @@ export function nil<T>(): Parser<T, undefined> {
                 }],
                 successful: true,
                 error: undefined
+            };
+        }
+    };
+}
+
+export function succ<T, R>(value: R): Parser<T, R> {
+    return {
+        parse(token: Token<T> | undefined): ParserOutput<T, R> {
+            return {
+                candidates: [{
+                    firstToken: token,
+                    nextToken: token,
+                    result: value
+                }],
+                successful: true,
+                error: undefined
+            };
+        }
+    };
+}
+
+export function fail(errorMessage: string): FailedParser {
+    return {
+        parse(token: Token<unknown> | undefined): FailedParserOutput {
+            return {
+                successful: false,
+                error: {
+                    kind: 'Error',
+                    pos: token?.pos,
+                    message: errorMessage
+                }
             };
         }
     };

@@ -35,4 +35,4 @@ list_sc(tok(TokenKind.Number), str(','))
 
 only gives you the longest result, consuming `1, 2, 3, 4`.
 
-Please see [seq](./seq.md), [kright](./kright.md) and [rep_sc](./rep.md) for more details.
+Please see [seq](./seq.md), [kright](./kright.md) and [rep_sc](./rep_sc.md) for more details.

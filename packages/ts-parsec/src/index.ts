@@ -4,6 +4,7 @@
 export * from './Lexer';
 export * from './Parsers/ParserInterface';
 export * from './Parsers/TokenParser';
+export * from './Parsers/MonadicSequencialParser';
 export * from './Parsers/SequencialParser';
 export * from './Parsers/AlternativeParser';
 export * from './Parsers/AlternativeScParser';
@@ -13,5 +14,4 @@ export * from './Parsers/ApplyParser';
 export * from './Parsers/AmbiguousParser';
 export * from './Parsers/ErrorParser';
 export * from './Parsers/Rule';
-export * from './Parsers/LazyParser';
-export * from './Parsers/ParserModule';
+export * from './ParserModule';

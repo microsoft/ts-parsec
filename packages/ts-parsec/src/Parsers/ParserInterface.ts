@@ -26,17 +26,29 @@ export interface ParseError {
  * If successful===false, error will be not null
  * The error field stores the farest error that has even been seen, even when tokens are successfully parsed.
  */
-export type ParserOutput<TKind, TResult> = {
+
+export interface SucceededParserOutput<TKind, TResult> {
     candidates: ParseResult<TKind, TResult>[];
     successful: true;
     error: ParseError | undefined;
-} | {
+}
+
+export interface FailedParserOutput {
     successful: false;
     error: ParseError;
-};
+}
+
+export type ParserOutput<TKind, TResult> =
+    | SucceededParserOutput<TKind, TResult>
+    | FailedParserOutput
+    ;
 
 export interface Parser<TKind, TResult> {
     parse(token: Token<TKind> | undefined): ParserOutput<TKind, TResult>;
+}
+
+export interface FailedParser {
+    parse(token: Token<unknown> | undefined): FailedParserOutput;
 }
 
 export function betterError(e1: ParseError | undefined, e2: ParseError | undefined): ParseError | undefined {
