@@ -39,6 +39,10 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
     - Consumes tokens that matches `a`, `b` and then `c` in order. You could put 2–16 arguments in `seq`.
     - Returns `[Ta, Tb, Tc]`.
     - Fails if **one of** `a`, `b` and `c` fails.
+  - [combine(a, (x)=>b, (x)=>c)](./parsec/combine.md):
+    - Consumes tokens that matches `a`, `b` and then `c` in order, when all parsers after `a` depend on the result of the previous parser. You could put 2-16 arguments in `combine`.
+    - Returns `Tc`.
+    - Fails if **one of** `a`, `b` and `c` fails.
   - [kleft(a, b)](./parsec/kleft.md):
     - Equivalent to `seq(a, b)`.
     - Returns `Ta`.
