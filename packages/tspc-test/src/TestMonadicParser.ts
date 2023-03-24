@@ -18,7 +18,7 @@ function succeeded<TKind, TResult>(r: parsec.ParserOutput<TKind, TResult>): pars
     if (r.successful) {
         return r.candidates;
     }
-    throw new Error(`The parsing does not succeed.`);
+    throw new Error(`The parsing does not succeed: ${r.error.message}`);
 }
 
 enum TokenKind {
@@ -31,7 +31,7 @@ enum TokenKind {
 const lexer = buildLexer([
     [true, /^\d+/g, TokenKind.Number],
     [true, /^[a-zA-Z]\w*/g, TokenKind.Identifier],
-    [false, /^,/g, TokenKind.Comma],
+    [true, /^,/g, TokenKind.Comma],
     [false, /^\s+/g, TokenKind.Space]
 ]);
 
@@ -98,7 +98,7 @@ test(`Parser: 2 foo,bar`, () => {
 });
 
 test(`Parser: 3 foo,bar,baz`, () => {
-    const firstToken = notUndefined(lexer.parse(`2 foo,bar,baz`));
+    const firstToken = notUndefined(lexer.parse(`3 foo,bar,baz`));
     {
         const result = succeeded(NAME.parse(firstToken));
         assert.strictEqual(result.length, 1);

@@ -196,7 +196,7 @@ export function combine(first: Parser<void, {}>, ...continuations: ((_: unknown)
                 return firstOutput;
             }
 
-            let result: ParseResult<void, {}[]>[] = [{ firstToken: token, nextToken: token, result: [] }];
+            let result: ParseResult<void, {}>[] = firstOutput.candidates;
             let error = firstOutput.error;
 
             for (const c of continuations) {
@@ -215,7 +215,7 @@ export function combine(first: Parser<void, {}>, ...continuations: ((_: unknown)
                             result.push({
                                 firstToken: step.firstToken,
                                 nextToken: candidate.nextToken,
-                                result: step.result.concat([candidate.result])
+                                result: candidate.result
                             });
                         }
                     }

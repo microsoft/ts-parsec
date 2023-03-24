@@ -18,7 +18,7 @@ function succeeded<TKind, TResult>(r: parsec.ParserOutput<TKind, TResult>): pars
     if (r.successful) {
         return r.candidates;
     }
-    throw new Error(`The parsing does not succeed.`);
+    throw new Error(`The parsing does not succeed: ${r.error.message}`);
 }
 
 enum TokenKind {
