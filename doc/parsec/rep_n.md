@@ -4,7 +4,7 @@
 rep_n(x, n)
 ```
 
-means the input consists exactly `n` times of `x`.
+means the input consists exactly `n` times of `x`. If `n` < 1, it is equivalent to `succ([])`.
 
 For example, The following parser:
 

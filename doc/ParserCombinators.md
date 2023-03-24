@@ -93,6 +93,10 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
     - Equivalent to `seq(x, rep_sc(kright(d, x)))`.
     - Returns `Tx[]`, instead of `[Tx, Tx[]]`.
     - Fails if `x` succeeds zero times.
+  - [list_n(x,d,n)](./parsec/list_n.md):
+    - Equivalent to `opt_sc(seq(x, rep_n(kright(d, x), n - 1)))`.
+    - Returns `Tx[]`, instead of `[Tx, Tx[]] | undefined`.
+    - Fails if there is less than `n` times of `x`.
 - Left Recursive
   - [lrec(a, b, f)](./parsec/lrec.md):
     - Equivalent to `seq(a, rep(b))`.
