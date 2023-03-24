@@ -55,6 +55,19 @@ ${
 ): Parser<TKind, (${numbers.map((value: number) => { return `T${value}`; }).join(' | ')})>;`;
 }
 
+function generateAltSc(count: number): string {
+  const numbers = getNumbers(1, count);
+  return `
+export function alt_sc<TKind, ${numbers.map((value: number) => { return `T${value}`; }).join(', ')}>(
+${
+    numbers
+      .map((value: number) => {
+        return `    p${value}: Parser<TKind, T${value}>`;
+      }).join(`,${os.EOL}`)
+    }
+): Parser<TKind, (${numbers.map((value: number) => { return `T${value}`; }).join(' | ')})>;`;
+}
+
 function generateSeq(count: number): string {
   const numbers = getNumbers(1, count);
   return `
@@ -72,6 +85,11 @@ const overloadingCount = +process.argv[2];
 
 replaceCodegenContent(path.join(__dirname, '../../ts-parsec/src/Parsers/AlternativeParser.ts'), `${
   getNumbers(2, overloadingCount).map(generateAlt).join(os.EOL)
+  }
+`);
+
+replaceCodegenContent(path.join(__dirname, '../../ts-parsec/src/Parsers/AlternativeScParser.ts'), `${
+  getNumbers(2, overloadingCount).map(generateAltSc).join(os.EOL)
   }
 `);
 

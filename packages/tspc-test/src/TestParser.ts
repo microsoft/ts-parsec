@@ -7,7 +7,7 @@
 import * as assert from 'assert';
 import * as parsec from 'typescript-parsec';
 import { buildLexer, Token } from 'typescript-parsec';
-import { alt, apply, errd, kleft, kmid, kright, opt, opt_sc, rep, rep_n, rep_sc, repr, seq, str, tok } from 'typescript-parsec';
+import { alt, alt_sc, apply, errd, kleft, kmid, kright, opt, opt_sc, rep, rep_n, rep_sc, repr, seq, str, tok } from 'typescript-parsec';
 
 function notUndefined<T>(t: T | undefined): T {
     assert.notStrictEqual(t, undefined);
@@ -66,13 +66,108 @@ test(`Parser: tok`, () => {
 });
 
 test(`Parser: alt`, () => {
-    const firstToken = notUndefined(lexer.parse(`123,456`));
     {
+        const firstToken = notUndefined(lexer.parse(`123,456`));
         const result = succeeded(alt(tok(TokenKind.Number), tok(TokenKind.Identifier)).parse(firstToken));
         assert.strictEqual(result.length, 1);
         assert.strictEqual(result[0].result.text, '123');
         assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, firstToken.next);
+    }
+    {
+        const firstToken = notUndefined(lexer.parse(`abc,def`));
+        const result = succeeded(alt(tok(TokenKind.Number), tok(TokenKind.Identifier)).parse(firstToken));
+        assert.strictEqual(result.length, 1);
+        assert.strictEqual(result[0].result.text, 'abc');
+        assert.strictEqual(result[0].firstToken, firstToken);
+        assert.strictEqual(result[0].nextToken, firstToken.next);
+    }
+    {
+        const firstToken = notUndefined(lexer.parse(`123,456`));
+        const alt1 = alt(tok(TokenKind.Number), tok(TokenKind.Identifier));
+        const alt2 = alt(tok(TokenKind.Identifier), tok(TokenKind.Number));
+        const result = succeeded(alt(alt1, alt2).parse(firstToken));
+        assert.strictEqual(result.length, 2);
+        assert.strictEqual(result[0].result.text, '123');
+        assert.strictEqual(result[0].firstToken, firstToken);
+        assert.strictEqual(result[0].nextToken, firstToken.next);
+        assert.strictEqual(result[1].result.text, '123');
+        assert.strictEqual(result[1].firstToken, firstToken);
+        assert.strictEqual(result[1].nextToken, firstToken.next);
+    }
+    {
+        const firstToken = notUndefined(lexer.parse(`abc,def`));
+        const alt1 = alt(tok(TokenKind.Number), tok(TokenKind.Identifier));
+        const alt2 = alt(tok(TokenKind.Identifier), tok(TokenKind.Number));
+        const result = succeeded(alt(alt1, alt2).parse(firstToken));
+        assert.strictEqual(result.length, 2);
+        assert.strictEqual(result[0].result.text, 'abc');
+        assert.strictEqual(result[0].firstToken, firstToken);
+        assert.strictEqual(result[0].nextToken, firstToken.next);
+        assert.strictEqual(result[1].result.text, 'abc');
+        assert.strictEqual(result[1].firstToken, firstToken);
+        assert.strictEqual(result[1].nextToken, firstToken.next);
+    }
+});
+
+test(`Parser: alt_sc`, () => {
+    {
+        const firstToken = notUndefined(lexer.parse(`123,456`));
+        const result = succeeded(alt_sc(tok(TokenKind.Number), tok(TokenKind.Identifier)).parse(firstToken));
+        assert.strictEqual(result.length, 1);
+        assert.strictEqual(result[0].result.text, '123');
+        assert.strictEqual(result[0].firstToken, firstToken);
+        assert.strictEqual(result[0].nextToken, firstToken.next);
+    }
+    {
+        const firstToken = notUndefined(lexer.parse(`abc,def`));
+        const result = succeeded(alt_sc(tok(TokenKind.Number), tok(TokenKind.Identifier)).parse(firstToken));
+        assert.strictEqual(result.length, 1);
+        assert.strictEqual(result[0].result.text, 'abc');
+        assert.strictEqual(result[0].firstToken, firstToken);
+        assert.strictEqual(result[0].nextToken, firstToken.next);
+    }
+    {
+        const firstToken = notUndefined(lexer.parse(`123,456`));
+        {
+            const alt1 = apply(alt(tok(TokenKind.Number), tok(TokenKind.Identifier)), (value: Token<TokenKind>) => `alt1: ${value.text}`);
+            const alt2 = apply(alt(tok(TokenKind.Identifier), tok(TokenKind.Number)), (value: Token<TokenKind>) => `alt2: ${value.text}`);
+            const result = succeeded(alt_sc(alt1, alt2).parse(firstToken));
+            assert.strictEqual(result.length, 1);
+            assert.strictEqual(result[0].result, 'alt1: 123');
+            assert.strictEqual(result[0].firstToken, firstToken);
+            assert.strictEqual(result[0].nextToken, firstToken.next);
+        }
+        {
+            const alt1 = apply(tok(TokenKind.Identifier), (value: Token<TokenKind>) => `alt1: ${value.text}`);
+            const alt2 = apply(alt(tok(TokenKind.Identifier), tok(TokenKind.Number)), (value: Token<TokenKind>) => `alt2: ${value.text}`);
+            const result = succeeded(alt_sc(alt1, alt2).parse(firstToken));
+            assert.strictEqual(result.length, 1);
+            assert.strictEqual(result[0].result, 'alt2: 123');
+            assert.strictEqual(result[0].firstToken, firstToken);
+            assert.strictEqual(result[0].nextToken, firstToken.next);
+        }
+    }
+    {
+        const firstToken = notUndefined(lexer.parse(`abc,def`));
+        {
+            const alt1 = apply(alt(tok(TokenKind.Number), tok(TokenKind.Identifier)), (value: Token<TokenKind>) => `alt1: ${value.text}`);
+            const alt2 = apply(alt(tok(TokenKind.Identifier), tok(TokenKind.Number)), (value: Token<TokenKind>) => `alt2: ${value.text}`);
+            const result = succeeded(alt_sc(alt1, alt2).parse(firstToken));
+            assert.strictEqual(result.length, 1);
+            assert.strictEqual(result[0].result, 'alt1: abc');
+            assert.strictEqual(result[0].firstToken, firstToken);
+            assert.strictEqual(result[0].nextToken, firstToken.next);
+        }
+        {
+            const alt1 = apply(tok(TokenKind.Number), (value: Token<TokenKind>) => `alt1: ${value.text}`);
+            const alt2 = apply(alt(tok(TokenKind.Identifier), tok(TokenKind.Number)), (value: Token<TokenKind>) => `alt2: ${value.text}`);
+            const result = succeeded(alt_sc(alt1, alt2).parse(firstToken));
+            assert.strictEqual(result.length, 1);
+            assert.strictEqual(result[0].result, 'alt2: abc');
+            assert.strictEqual(result[0].firstToken, firstToken);
+            assert.strictEqual(result[0].nextToken, firstToken.next);
+        }
     }
 });
 

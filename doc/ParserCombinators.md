@@ -47,7 +47,11 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
 - Alternative
   - [alt(a, b, c)](./parsec/alt.md):
     - Consumes tokens that matches `a`, `b` or `c`. You could put 2–16 arguments in `alt`.
-    - Returns `Ta | Tb | Tc`.
+    - Returns `Ta | Tb | Tc`, with all succeeded attempts.
+    - Fails if **all of** `a`, `b` or `c` fails.
+  - [alt_sc(a, b, c)](./parsec/alt_sc.md):
+    - Consumes tokens that matches `a`, `b` or `c`. You could put 2–16 arguments in `alt`.
+    - Returns `Ta | Tb | Tc`, with the first succeeded attempt.
     - Fails if **all of** `a`, `b` or `c` fails.
   - [opt_sc(x)](./parsec/opt_sc.md):
     - Consumes `x`.

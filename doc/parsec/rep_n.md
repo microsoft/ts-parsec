@@ -1,4 +1,4 @@
-# Parser Combinator: repr
+# Parser Combinator: rep_n
 
 ```typescript
 rep_n(x, n)
