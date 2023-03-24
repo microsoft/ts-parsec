@@ -33,22 +33,22 @@ export interface SucceededParserOutput<TKind, TResult> {
     error: ParseError | undefined;
 }
 
-export interface FailedParserOutput<TResult> {
+export interface FailedParserOutput {
     successful: false;
     error: ParseError;
 }
 
 export type ParserOutput<TKind, TResult> =
     | SucceededParserOutput<TKind, TResult>
-    | FailedParserOutput<TResult>
+    | FailedParserOutput
     ;
 
 export interface Parser<TKind, TResult> {
     parse(token: Token<TKind> | undefined): ParserOutput<TKind, TResult>;
 }
 
-export interface FailedParser<TResult> {
-    parse(token: Token<unknown> | undefined): FailedParserOutput<TResult>;
+export interface FailedParser {
+    parse(token: Token<unknown> | undefined): FailedParserOutput;
 }
 
 export function betterError(e1: ParseError | undefined, e2: ParseError | undefined): ParseError | undefined {

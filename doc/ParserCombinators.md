@@ -19,6 +19,13 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
     - Consumes no token.
     - Returns `undefined`.
     - Never fails.
+  - [succ(value)](./parsec/succ.md):
+    - Consumes no token.
+    - Returns `value`.
+    - Never fails.
+  - [fail(errorMessage)](./parsec/fail.md):
+    - Consumes no token.
+    - Always fails.
   - [str('x')](./parsec/str.md):
     - Consumes a token that is `'x'`.
     - Returns `Token<T>`.

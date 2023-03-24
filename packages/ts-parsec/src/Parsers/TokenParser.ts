@@ -36,9 +36,9 @@ export function succ<T, R>(value: R): Parser<T, R> {
     };
 }
 
-export function fail<R>(errorMessage: string): FailedParser<R> {
+export function fail(errorMessage: string): FailedParser {
     return {
-        parse(token: Token<unknown> | undefined): FailedParserOutput<R> {
+        parse(token: Token<unknown> | undefined): FailedParserOutput {
             return {
                 successful: false,
                 error: {

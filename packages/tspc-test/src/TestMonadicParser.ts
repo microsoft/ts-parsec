@@ -58,7 +58,7 @@ NAME_LIST.setPattern(
         COUNT,
         (count: number) => {
             if (count < 1) {
-                return fail<string[]>(`Illegal number of names: ${count}, it should >= 1.`);
+                return fail(`Illegal number of names: ${count}, it should >= 1.`);
             } else {
                 return list_n(NAME, str(','), count);
             }
