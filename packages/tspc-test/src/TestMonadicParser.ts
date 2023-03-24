@@ -78,9 +78,9 @@ test(`Parser: 0`, () => {
 test(`Parser: 1 foo`, () => {
     const firstToken = notUndefined(lexer.parse(`1 foo`));
     {
-        const result = succeeded(NAME.parse(firstToken));
+        const result = succeeded(NAME_LIST.parse(firstToken));
         assert.strictEqual(result.length, 1);
-        assert.strictEqual(result[0].result, ['foo']);
+        assert.deepStrictEqual(result[0].result, ['foo']);
         assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, undefined);
     }
@@ -89,9 +89,9 @@ test(`Parser: 1 foo`, () => {
 test(`Parser: 2 foo,bar`, () => {
     const firstToken = notUndefined(lexer.parse(`2 foo,bar`));
     {
-        const result = succeeded(NAME.parse(firstToken));
+        const result = succeeded(NAME_LIST.parse(firstToken));
         assert.strictEqual(result.length, 1);
-        assert.strictEqual(result[0].result, ['foo', 'bar']);
+        assert.deepStrictEqual(result[0].result, ['foo', 'bar']);
         assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, undefined);
     }
@@ -100,9 +100,9 @@ test(`Parser: 2 foo,bar`, () => {
 test(`Parser: 3 foo,bar,baz`, () => {
     const firstToken = notUndefined(lexer.parse(`3 foo,bar,baz`));
     {
-        const result = succeeded(NAME.parse(firstToken));
+        const result = succeeded(NAME_LIST.parse(firstToken));
         assert.strictEqual(result.length, 1);
-        assert.strictEqual(result[0].result, ['foo', 'bar', 'baz']);
+        assert.deepStrictEqual(result[0].result, ['foo', 'bar', 'baz']);
         assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, undefined);
     }
