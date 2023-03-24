@@ -8,7 +8,7 @@ means the input consists of `a`, `b` and `c` in order,
 returning the result from the last parser,
 when all parsers after `a` depend on the result of the previous parser.
 
-For example, a list followed by the length of it:
+For example, a list following the length of it:
 
 ```typescript
 3 foo,bar,baz
@@ -27,6 +27,8 @@ combine(
 )
 ```
 
+The implementation of `NUMBER` and `NAME` are omitted, they are not prebuilt parsers.
+
 When the first token is `0`, the parser becomes `fail`, and it fails.
 
 When the first token is a positive number, the parser becomes `list_n` of `NAME`.
@@ -39,7 +41,7 @@ There could be 2-16 arguments to fill in `combine`.
 When you need more than 16 arguments, just put multiple `combine` in another `combine` like this:
 
 ```typescript
-combine(combine(a, (x)=>b, (x)=>c), (x)=>combine(d, (x)=>e, (x)=>f), ...)
+combine(combine(a, (x)=>b, (x)=>c), (y)=>combine(d, (x)=>e, (x)=>f), ...)
 ```
 
 It works exactly as
