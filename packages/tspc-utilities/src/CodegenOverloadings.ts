@@ -59,13 +59,13 @@ function generateAltSc(count: number): string {
   const numbers = getNumbers(1, count);
   return `
 export function alt_sc<TKind, ${numbers.map((value: number) => { return `T${value}`; }).join(', ')}>(
-  ${
-      numbers
-        .map((value: number) => {
-          return `    p${value}: Parser<TKind, T${value}>`;
-        }).join(`,${os.EOL}`)
-      }
-  ): Parser<TKind, (${numbers.map((value: number) => { return `T${value}`; }).join(' | ')})>;`;
+${
+    numbers
+      .map((value: number) => {
+        return `    p${value}: Parser<TKind, T${value}>`;
+      }).join(`,${os.EOL}`)
+    }
+): Parser<TKind, (${numbers.map((value: number) => { return `T${value}`; }).join(' | ')})>;`;
 }
 
 function generateSeq(count: number): string {
