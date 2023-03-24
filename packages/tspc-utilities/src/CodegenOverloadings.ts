@@ -81,6 +81,21 @@ ${
 ): Parser<TKind, [${numbers.map((value: number) => { return `T${value}`; }).join(', ')}]>;`;
 }
 
+function generateContinue(count: number): string {
+  const numbers = getNumbers(1, count);
+  return `
+export function combine<TKind, ${numbers.map((value: number) => { return `T${value}`; }).join(', ')}>(
+    p1: Parser<TKind, T1>,
+${
+    numbers
+      .slice(1)
+      .map((value: number) => {
+        return `    p${value}: (value : T${value - 1}) => Parser<TKind, T${value}>`;
+      }).join(`,${os.EOL}`)
+    }
+): Parser<TKind, T${count}>;`;
+}
+
 const overloadingCount = +process.argv[2];
 
 replaceCodegenContent(path.join(__dirname, '../../ts-parsec/src/Parsers/AlternativeParser.ts'), `${
@@ -95,5 +110,10 @@ replaceCodegenContent(path.join(__dirname, '../../ts-parsec/src/Parsers/Alternat
 
 replaceCodegenContent(path.join(__dirname, '../../ts-parsec/src/Parsers/SequencialParser.ts'), `${
   getNumbers(2, overloadingCount).map(generateSeq).join(os.EOL)
+  }
+`);
+
+replaceCodegenContent(path.join(__dirname, '../../ts-parsec/src/Parsers/MonadicSequencialParser.ts'), `${
+  getNumbers(2, overloadingCount).map(generateContinue).join(os.EOL)
   }
 `);
