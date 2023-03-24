@@ -90,7 +90,7 @@ ${
     numbers
       .slice(1)
       .map((value: number) => {
-        return `    p${value}: (value : T${value - 1}) => Parser<TKind, T${value}>`;
+        return `    p${value}: (value: T${value - 1}) => Parser<TKind, T${value}>`;
       }).join(`,${os.EOL}`)
     }
 ): Parser<TKind, T${count}>;`;
