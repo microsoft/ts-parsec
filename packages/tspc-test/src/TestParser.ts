@@ -66,11 +66,19 @@ test(`Parser: tok`, () => {
 });
 
 test(`Parser: alt`, () => {
-    const firstToken = notUndefined(lexer.parse(`123,456`));
     {
+        const firstToken = notUndefined(lexer.parse(`123,456`));
         const result = succeeded(alt(tok(TokenKind.Number), tok(TokenKind.Identifier)).parse(firstToken));
         assert.strictEqual(result.length, 1);
         assert.strictEqual(result[0].result.text, '123');
+        assert.strictEqual(result[0].firstToken, firstToken);
+        assert.strictEqual(result[0].nextToken, firstToken.next);
+    }
+    {
+        const firstToken = notUndefined(lexer.parse(`abc,def`));
+        const result = succeeded(alt(tok(TokenKind.Number), tok(TokenKind.Identifier)).parse(firstToken));
+        assert.strictEqual(result.length, 1);
+        assert.strictEqual(result[0].result.text, 'abc');
         assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, firstToken.next);
     }

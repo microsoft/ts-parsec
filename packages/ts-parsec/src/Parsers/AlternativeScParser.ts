@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import { Token } from '../Lexer';
-import { betterError, ParseError, Parser, ParseResult, ParserOutput, resultOrError } from './ParserInterface';
+import { betterError, ParseError, Parser, ParserOutput, resultOrError } from './ParserInterface';
 
 // CodegenOverloadings:Begin
 
@@ -192,14 +192,12 @@ export function alt_sc(...ps: Parser<void, {}>[]): Parser<void, {}> {
     return {
         parse(token: Token<void> | undefined): ParserOutput<void, {}> {
             let error: ParseError | undefined;
-            let result: ParseResult<void, {}>[] = [];
-            let successful = false;
             for (const p of ps) {
                 const output = p.parse(token);
                 error = betterError(error, output.error);
 
                 if (output.successful) {
-                    return output;
+                    return resultOrError(output.candidates, error, true);
                 }
             }
             return {
