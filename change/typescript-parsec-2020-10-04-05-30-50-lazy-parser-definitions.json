@@ -1,8 +1,0 @@
-{
-  "type": "minor",
-  "comment": "- add lazy parser to simplify creating mutually dependent parsers\n- add factory for parser modules to allow keeping structure in mutually dependent parsers",
-  "packageName": "typescript-parsec",
-  "email": "2ndjpeg@gmail.com",
-  "commit": "2417eab0f9f612b6eb9b6c6f6191ff3121eb1d95",
-  "date": "2020-10-04T03:30:50.488Z"
-}
