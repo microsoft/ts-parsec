@@ -7,7 +7,7 @@
 import * as assert from 'assert';
 import * as parsec from 'typescript-parsec';
 import { buildLexer, Token } from 'typescript-parsec';
-import { alt, apply, errd, kleft, kmid, kright, opt, opt_sc, rep, rep_sc, repr, seq, str, tok } from 'typescript-parsec';
+import { alt, apply, errd, kleft, kmid, kright, opt, opt_sc, rep, rep_n, rep_sc, repr, seq, str, tok } from 'typescript-parsec';
 
 function notUndefined<T>(t: T | undefined): T {
     assert.notStrictEqual(t, undefined);
@@ -197,6 +197,42 @@ test(`Parser: rep`, () => {
         assert.deepStrictEqual(result[2].result, []);
         assert.strictEqual(result[2].firstToken, firstToken);
         assert.strictEqual(result[2].nextToken, firstToken);
+    }
+});
+
+test(`Parser: rep_n`, () => {
+    const firstToken = notUndefined(lexer.parse(`123,456,789`));
+    {
+        const result = succeeded(rep_n(tok(TokenKind.Number), 0).parse(firstToken));
+        assert.strictEqual(result.length, 1);
+        assert.deepStrictEqual(result[0].result.length, 0);
+        assert.strictEqual(result[0].firstToken, firstToken);
+        assert.strictEqual(result[0].nextToken, firstToken);
+    }
+    {
+        const result = succeeded(rep_n(tok(TokenKind.Number), 1).parse(firstToken));
+        assert.strictEqual(result.length, 1);
+        assert.deepStrictEqual(result[0].result.map((value: Token<TokenKind>) => value.text), ['123']);
+        assert.strictEqual(result[0].firstToken, firstToken);
+        assert.strictEqual(result[0].nextToken?.text, '456');
+    }
+    {
+        const result = succeeded(rep_n(tok(TokenKind.Number), 2).parse(firstToken));
+        assert.strictEqual(result.length, 1);
+        assert.deepStrictEqual(result[0].result.map((value: Token<TokenKind>) => value.text), ['123', '456']);
+        assert.strictEqual(result[0].firstToken, firstToken);
+        assert.strictEqual(result[0].nextToken?.text, '789');
+    }
+    {
+        const result = succeeded(rep_n(tok(TokenKind.Number), 3).parse(firstToken));
+        assert.strictEqual(result.length, 1);
+        assert.deepStrictEqual(result[0].result.map((value: Token<TokenKind>) => value.text), ['123', '456', '789']);
+        assert.strictEqual(result[0].firstToken, firstToken);
+        assert.strictEqual(result[0].nextToken, undefined);
+    }
+    {
+        const output = rep_n(tok(TokenKind.Number), 4).parse(firstToken);
+        assert.strictEqual(output.successful, false);
     }
 });
 

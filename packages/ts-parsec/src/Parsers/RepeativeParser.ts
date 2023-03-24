@@ -92,6 +92,43 @@ export function repr<TKind, TResult>(p: Parser<TKind, TResult>): Parser<TKind, T
     };
 }
 
+export function rep_n<TKind, TResult>(p: Parser<TKind, TResult>, count: number): Parser<TKind, TResult[]> {
+    return {
+        parse(token: Token<TKind> | undefined): ParserOutput<TKind, TResult[]> {
+            let error: ParseError | undefined;
+            let candidates: ParseResult<TKind, TResult[]>[] = [{ firstToken: token, nextToken: token, result: [] }];
+
+            for (let i = 0; i < count; i++) {
+                const newCandidates: ParseResult<TKind, TResult[]>[] = [];
+                for (const step of candidates) {
+                    const output = p.parse(step.nextToken);
+                    error = betterError(error, output.error);
+                    if (output.successful) {
+                        for (const candidate of output.candidates) {
+                            newCandidates.push({
+                                firstToken: step.firstToken,
+                                nextToken: candidate.nextToken,
+                                result: step.result.concat([candidate.result])
+                            });
+                        }
+                    }
+                }
+
+                if (newCandidates.length === 0) {
+                    return {
+                        successful: false,
+                        error: <ParseError>error
+                    };
+                } else {
+                    candidates = newCandidates;
+                }
+            }
+
+            return resultOrError(candidates, error, true);
+        }
+    };
+}
+
 function applyList<TResult, TSeparator>(value: [TResult, [TSeparator, TResult][]]): TResult[] {
     return [value[0]].concat(value[1].map((pair: [TSeparator, TResult]) => { return pair[1]; }));
 }
