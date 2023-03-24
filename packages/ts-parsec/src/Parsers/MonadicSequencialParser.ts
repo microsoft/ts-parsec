@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import { Token } from '../Lexer';
-import { betterError, ParseError, Parser, ParseResult, ParserOutput, resultOrError } from './ParserInterface';
+import { betterError, Parser, ParseResult, ParserOutput, resultOrError } from './ParserInterface';
 
 // CodegenOverloadings:Begin
 
@@ -188,16 +188,16 @@ export function combine<TKind, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
 
 // CodegenOverloadings:End
 
-export function combine(first: Parser<void, {}>, continuations: ((_: {}) => Parser<void, {}>)[]): Parser<void, {}> {
+export function combine(first: Parser<void, {}>, ...continuations: ((_: unknown) => Parser<void, {}>)[]): Parser<void, {}> {
     return {
         parse(token: Token<void> | undefined): ParserOutput<void, {}> {
-            let output = first.parse(token);
-            if (!output.successful) {
-                return output;
+            const firstOutput = first.parse(token);
+            if (!firstOutput.successful) {
+                return firstOutput;
             }
 
             let result: ParseResult<void, {}[]>[] = [{ firstToken: token, nextToken: token, result: [] }];
-            let error = output.error;
+            let error = firstOutput.error;
 
             for (const c of continuations) {
                 if (result.length === 0) {
