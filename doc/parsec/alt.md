@@ -5,6 +5,9 @@ alt(a, b, c)
 ```
 
 means the input matches at least one in `a`, `b` and `c`.
+
+`alt(a, nil<T>())` could be replaced by `opt(a)`.
+
 For example, for passing TypeScript's boolean literal `true` or `false`, we could write:
 
 ```typescript
@@ -20,7 +23,6 @@ seq(EXPRESSION, alt(str(';'), nil<T>()))
 ```
 
 It returns `[TExpression, Token<T> | undefined]`.
-`alt(a, nil<T>())` could be replaced by `opt(a)` or `opt_sc(a)` in different situations.
 In this case, we don't care whether there is a semicolon or not, we only need the expression.
 We could optimize the parser like this:
 
