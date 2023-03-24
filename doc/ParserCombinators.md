@@ -70,6 +70,10 @@ In most of the cases, you don't need to deal with multiple results by yourself, 
     - Consumes `x` zero to multiple times.
     - Returns `Tx[]`. If 3 `x` are consumed, it returns multiple results in the order like `[]`, `[x1]`, `[x1, x2]`, and `[x1, x2, x3]`.
     - Never fails.
+  - [rep_n(x, n)](./parsec/rep_n.md):
+    - Consumes `x` exactly `n` times.
+    - Returns `Tx[]`. If 3 `x` are consumed, it returns `[x1, x2, x3]`.
+    - Fails if there is less than `n` times of `x`.
   - [list(x, d)](./parsec/list.md).
     - Equivalent to `seq(x, rep(kright(d, x)))`.
     - Returns `Tx[]`, instead of `[Tx, Tx[]]`.
