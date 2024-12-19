@@ -1,5 +1,5 @@
 {
-  "name": "tspc-test",
+  "name": "@microsoft/tspc-test",
   "version": "1.0.0",
   "description": "Test project for ts-parsec",
   "private": true,
@@ -27,7 +27,7 @@
     "tslint": "^5.18.0",
     "tslint-microsoft-contrib": "^6.2.0",
     "typescript": "^3.9.6",
-    "tslint-shared": "^1.0.0"
+    "@microsoft/tslint-shared": "^1.0.0"
   },
   "jest": {
     "testRegex": "/lib/Test.*\\.js",

@@ -1,5 +1,5 @@
 {
-  "name": "ts-parsec-repo",
+  "name": "@microsoft/ts-parsec-repo",
   "version": "0.1.0",
   "private": true,
   "scripts": {

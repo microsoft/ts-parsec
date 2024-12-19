@@ -22,6 +22,6 @@
     "tslint": "^5.18.0",
     "tslint-microsoft-contrib": "^6.2.0",
     "typescript": "^3.9.6",
-    "tslint-shared": "^1.0.0"
+    "@microsoft/tslint-shared": "^1.0.0"
   }
 }
