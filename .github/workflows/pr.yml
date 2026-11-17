@@ -3,7 +3,7 @@ on: [push, pull_request]
 jobs:
   PR:
     name: Validation
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e # v1.2.0
         with:
