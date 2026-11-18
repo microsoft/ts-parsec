@@ -88,3 +88,14 @@ export function unableToConsumeToken<TKind>(token: Token<TKind> | undefined): Pa
         message: `Unable to consume token: ${token === undefined ? '<END-OF-FILE>' : token.text}`
     };
 }
+
+export function rangeInvalid<TKind>(
+        min : string,
+        max: string,
+        token: Token<TKind> | undefined): ParseError {
+    return {
+        kind: 'Error',
+        pos: token === undefined ? undefined : token.pos,
+        message: `the range for \`range\` is not valid: min:${min}, max:${max} `
+    };
+}

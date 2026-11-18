@@ -7,7 +7,7 @@
 import * as assert from 'assert';
 import * as parsec from 'typescript-parsec';
 import { buildLexer, Token } from 'typescript-parsec';
-import { alt, alt_sc, apply, errd, kleft, kmid, kright, opt, opt_sc, rep, rep_n, rep_sc, repr, seq, str, tok } from 'typescript-parsec';
+import { alt, alt_sc, apply, errd, kleft, kmid, kright, opt, opt_sc, range, rep, rep_n, rep_sc, repr, seq, str, tok } from 'typescript-parsec';
 
 function notUndefined<T>(t: T | undefined): T {
     assert.notStrictEqual(t, undefined);
@@ -61,6 +61,25 @@ test(`Parser: tok`, () => {
     }
     {
         const result = str('456').parse(firstToken);
+        assert.strictEqual(result.successful, false);
+    }
+});
+
+test(`Parser: range`, () => {
+    const firstToken = notUndefined(lexer.parse(`3,142`));
+    {
+        const result = succeeded(range('1', '9').parse(firstToken));
+        assert.strictEqual(result.length, 1);
+        assert.strictEqual(result[0].result.text, '3');
+        assert.strictEqual(result[0].firstToken, firstToken);
+        assert.strictEqual(result[0].nextToken, firstToken.next);
+    }
+    {
+        const result = range('9', '1').parse(firstToken);
+        assert.strictEqual(result.successful, false);
+    }
+    {
+        const result = range('a', 'z').parse(firstToken);
         assert.strictEqual(result.successful, false);
     }
 });
