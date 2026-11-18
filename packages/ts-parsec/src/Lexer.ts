@@ -83,16 +83,37 @@ class TokenImpl<T> implements Token<T> {
     }
 }
 
-class LexerImpl<T> implements Lexer<T> {
-    constructor(public rules: [boolean, RegExp, T][]) {
-        for (const rule of this.rules) {
-            if (rule[1].source[0] !== '^') {
-                throw new Error(`Regular expression patterns for a tokenizer should start with "^": ${rule[1].source}`);
-            }
-            if (!rule[1].global) {
-                throw new Error(`Regular expression patterns for a tokenizer should be global: ${rule[1].source}`);
+export type LexerRule<T> = [boolean, RegExp, T, (LexerRule<T>[] | 'push' | 'pop')?];
+export type LexerState<T> = LexerRule<T>[];
+
+function analyzeLexerRules<T>(
+    rules: LexerState<T>,
+    memo: Set<LexerState<T>> = new Set(),
+): void {
+    memo.add(rules);
+    for (const [, regex, , state] of rules) {
+        if (regex.source[0] !== '^') {
+            throw new Error(`Regular expression patterns for a tokenizer should start with '^': ${regex.source}`);
+        }
+        if (!regex.global) {
+            throw new Error(`Regular expression patterns for a tokenizer should be global: ${regex.source}`);
+        }
+        if (state !== undefined) {
+            if (state !== 'pop' && state !== 'push') {
+                if (memo.has(state)) {
+                    return;
+                }
+                analyzeLexerRules(state, memo);
             }
         }
+    }
+}
+
+class LexerImpl<T> implements Lexer<T> {
+    private states: LexerState<T>[] = [this.rules];
+
+    constructor(public rules: LexerState<T>) {
+        analyzeLexerRules(rules);
     }
 
     public parse(input: string): TokenImpl<T> | undefined {
@@ -106,7 +127,9 @@ class LexerImpl<T> implements Lexer<T> {
 
         const subString = input.substr(indexStart);
         let result: TokenImpl<T> | undefined;
-        for (const [keep, regexp, kind] of this.rules) {
+        const currentRuleset = this.states[this.states.length - 1];
+        let nextState: LexerState<T> | 'push' | 'pop' | undefined;
+        for (const [keep, regexp, kind, next] of currentRuleset) {
             regexp.lastIndex = 0;
             if (regexp.test(subString)) {
                 const text = subString.substr(0, regexp.lastIndex);
@@ -123,6 +146,7 @@ class LexerImpl<T> implements Lexer<T> {
                 const newResult = new TokenImpl<T>(this, input, kind, text, { index: indexStart, rowBegin, columnBegin, rowEnd, columnEnd }, keep);
                 if (result === undefined || result.text.length < newResult.text.length) {
                     result = newResult;
+                    nextState = next;
                 }
             }
         }
@@ -133,6 +157,13 @@ class LexerImpl<T> implements Lexer<T> {
                 `Unable to tokenize the rest of the input: ${input.substr(indexStart)}`
             );
         } else {
+            if (nextState === 'pop') {
+                this.states.pop();
+            } else if (nextState === 'push') {
+                this.states.push(currentRuleset);
+            } else if (nextState !== undefined) {
+                this.states.push(nextState);
+            }
             return result;
         }
     }
@@ -155,6 +186,21 @@ class LexerImpl<T> implements Lexer<T> {
     }
 }
 
-export function buildLexer<T>(rules: [boolean, RegExp, T][]): Lexer<T> {
+export function buildLexer<T>(rules: LexerState<T>): Lexer<T> {
     return new LexerImpl<T>(rules);
 }
+
+// TESTING
+
+const statements: LexerState<string> = [];
+const stringLiteral: LexerState<string> = [];
+
+statements.push(
+  [true, /^"/g, "stringDelimiter", stringLiteral],
+);
+
+stringLiteral.push(
+  [true, /^\${/g, "stringInterpolationDelimiter", statements],
+);
+
+buildLexer(statements);

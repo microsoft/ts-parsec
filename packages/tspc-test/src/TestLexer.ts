@@ -4,7 +4,7 @@
 // tslint:disable:trailing-comma
 
 import * as assert from 'assert';
-import { buildLexer } from 'typescript-parsec';
+import { buildLexer, LexerState } from 'typescript-parsec';
 
 function notUndefined<T>(t: T | undefined): T {
     assert.notStrictEqual(t, undefined);
@@ -123,6 +123,56 @@ test(`Lexer: identifiers and numbers with discardable commas and spaces`, () => 
 
     token = notUndefined(token);
     assert.strictEqual(token.kind, TokenKind.Number);
+    assert.strictEqual(token.text, '456');
+    token = token.next;
+
+    token = notUndefined(token);
+    assert.strictEqual(token.kind, TokenKind.Identifier);
+    assert.strictEqual(token.text, 'def');
+    token = token.next;
+
+    assert.strictEqual(token, undefined);
+});
+
+test(`Lexer: C-style nested block comments via lexer states`, () => {
+    enum TokenKind {
+        CommentBegin,
+        CommentEnd,
+        CommentContents,
+        Number,
+        Identifier,
+        Comma,
+        Space,
+    }
+
+    const blockComment: LexerState<TokenKind> = [
+        [false, /^\/\*/g, TokenKind.CommentBegin, 'push'], // nested comment
+        [false, /^\*\//g, TokenKind.CommentEnd, 'pop'],
+        [true, /^(?:(?!\/\*|\*\/).)+/g, TokenKind.CommentContents],
+    ];
+
+    const lexer = buildLexer([
+        [false, /^\/\*/g, TokenKind.CommentBegin, blockComment],
+        [true, /^\d+/g, TokenKind.Number],
+        [true, /^[a-zA-Z]\w*/g, TokenKind.Identifier],
+        [false, /^,/g, TokenKind.Comma],
+        [false, /^\s+/g, TokenKind.Space],
+    ]);
+
+    let token = lexer.parse(`123 /* abc /*456*/*/ def`);
+
+    token = notUndefined(token);
+    assert.strictEqual(token.kind, TokenKind.Number);
+    assert.strictEqual(token.text, '123');
+    token = token.next;
+
+    token = notUndefined(token);
+    assert.strictEqual(token.kind, TokenKind.CommentContents);
+    assert.strictEqual(token.text, ' abc ');
+    token = token.next;
+
+    token = notUndefined(token);
+    assert.strictEqual(token.kind, TokenKind.CommentContents);
     assert.strictEqual(token.text, '456');
     token = token.next;
 

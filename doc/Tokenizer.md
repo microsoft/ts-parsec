@@ -51,3 +51,43 @@ For some languages, like VB.NET, it has a context sensitive tokenizer. You could
 ## NOTE
 
 `buildLexer` only accepts regular expressions like this: `/^xxx/g`.
+
+## Stateful tokenization
+
+Internally, the lexer maintains a stack of states that you can grow. A state is
+defined as the set of rules that the lexer uses to tokenize the input. For
+instance, in the examples shown above, `buildLexer` was used to create a lexer
+with a single state with three rules each. Stateful tokenization is useful if
+you want to provide different rules to the lexer based on previously matched
+tokens.
+
+The following example shows a lexer that tokenizes nested block comments. Start
+by looking at the set of top-level rules defined by `buildLexer`. These rules
+look standard, except for the rule that recognizes a `TokenKind.CommentBegin`.
+When a rule contains a fourth element, and the rule is matched, it means that
+the lexer will switch to a different state. In this case, the fourth element
+tells us that the lexer will switch to the `BlockComment` state by pushing the
+state to its internal stack. The definition of a state works almost analogously
+to the definition of the top-level state using `buildLexer`. When the tokenizer
+switches to another state, only the rules defined inside of that state apply
+until the tokenizer leaves the state again. To leave a state, the fourth element
+of a rule can be set to `'pop'`, which pops the state off of the lexers'
+internal stack. In case you wish to push the same state to the stack that you
+are already in, use the `'push'` directive. When the fourth element of a rule is
+omitted, the lexer will remain in its current state.
+
+```typescript
+const blockComment: LexerState<TokenKind> = [
+    [false, /^\/\*/g, TokenKind.CommentBegin, "push"], // nested comment
+    [false, /^\*\//g, TokenKind.CommentEnd, "pop"],
+    [true, /^(?:(?!\/\*|\*\/).)+/g, TokenKind.CommentContents],
+];
+
+const tokenizer = buildLexer([
+    [false, /^\/\*/g, TokenKind.CommentBegin, blockComment],
+    [true, /^\d+/g, TokenKind.Number],
+    [true, /^[a-zA-Z]\w*/g, TokenKind.Identifier],
+    [false, /^,/g, TokenKind.Comma],
+    [false, /^\s+/g, TokenKind.Space],
+]);
+```
