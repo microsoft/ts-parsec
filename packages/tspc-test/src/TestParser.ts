@@ -184,6 +184,42 @@ test(`Parser: seq`, () => {
         assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, undefined);
     }
+    {
+        const ambiguous = alt(
+            apply(tok(TokenKind.Number), (value: Token<TokenKind>) => `a:${value.text}`),
+            apply(tok(TokenKind.Number), (value: Token<TokenKind>) => `b:${value.text}`)
+        );
+        const result = succeeded(seq(ambiguous, ambiguous).parse(firstToken));
+        assert.strictEqual(result.length, 4);
+        assert.deepStrictEqual(
+            result.map((candidate: parsec.ParseResult<TokenKind, [string, string]>) => candidate.result),
+            [
+                ['a:123', 'a:456'],
+                ['a:123', 'b:456'],
+                ['b:123', 'a:456'],
+                ['b:123', 'b:456']
+            ]
+        );
+        for (const candidate of result) {
+            assert.strictEqual(candidate.firstToken, firstToken);
+            assert.strictEqual(candidate.nextToken, undefined);
+        }
+    }
+    {
+        const fourTokens = notUndefined(lexer.parse(`1,2,3,4`));
+        const result = succeeded(
+            seq(
+                tok(TokenKind.Number),
+                tok(TokenKind.Number),
+                tok(TokenKind.Number),
+                tok(TokenKind.Number)
+            ).parse(fourTokens)
+        );
+        assert.strictEqual(result.length, 1);
+        assert.deepStrictEqual(result[0].result.map((value: Token<TokenKind>) => value.text), ['1', '2', '3', '4']);
+        assert.strictEqual(result[0].firstToken, fourTokens);
+        assert.strictEqual(result[0].nextToken, undefined);
+    }
 });
 
 test(`Parser: kleft, kmid, kright`, () => {

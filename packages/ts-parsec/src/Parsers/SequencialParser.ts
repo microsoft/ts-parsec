@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 import { Token } from '../Lexer';
+import { ConsStep, toArray } from './ConsList';
 import { betterError, ParseError, Parser, ParseResult, ParserOutput, resultOrError } from './ParserInterface';
 
 // CodegenOverloadings:Begin
@@ -192,13 +193,9 @@ export function seq(...ps: Parser<void, {}>[]): Parser<void, {}> {
     return {
         parse(token: Token<void> | undefined): ParserOutput<void, {}> {
             let error: ParseError | undefined;
-            let result: ParseResult<void, {}[]>[] = [{ firstToken: token, nextToken: token, result: [] }];
+            let result: ConsStep<void, {}>[] = [{ firstToken: token, nextToken: token, node: undefined }];
 
             for (const p of ps) {
-                if (result.length === 0) {
-                    break;
-                }
-
                 const steps = result;
                 result = [];
                 for (const step of steps) {
@@ -210,13 +207,28 @@ export function seq(...ps: Parser<void, {}>[]): Parser<void, {}> {
                             result.push({
                                 firstToken: step.firstToken,
                                 nextToken: candidate.nextToken,
-                                result: step.result.concat([candidate.result])
+                                node: { value: candidate.result, prev: step.node }
                             });
                         }
                     }
                 }
+
+                if (result.length === 0) {
+                    return {
+                        successful: false,
+                        error: <ParseError>error
+                    };
+                }
             }
-            return resultOrError(result, error, result.length !== 0);
+
+            const finalCandidates: ParseResult<void, {}[]>[] = result.map(
+                (step: ConsStep<void, {}>): ParseResult<void, {}[]> => ({
+                    firstToken: step.firstToken,
+                    nextToken: step.nextToken,
+                    result: toArray(step.node)
+                })
+            );
+            return resultOrError(finalCandidates, error, true);
         }
     };
 }
