@@ -192,14 +192,16 @@ export function alt(...ps: Parser<void, {}>[]): Parser<void, {}> {
     return {
         parse(token: Token<void> | undefined): ParserOutput<void, {}> {
             let error: ParseError | undefined;
-            let result: ParseResult<void, {}>[] = [];
+            const result: ParseResult<void, {}>[] = [];
             let successful = false;
             for (const p of ps) {
                 const output = p.parse(token);
                 error = betterError(error, output.error);
 
                 if (output.successful) {
-                    result = result.concat(output.candidates);
+                    for (const candidate of output.candidates) {
+                        result.push(candidate);
+                    }
                     successful = true;
                 }
             }

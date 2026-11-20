@@ -7,6 +7,7 @@
 
 import { Token } from '../Lexer';
 import { apply, kright } from './ApplyParser';
+import { ConsStep, toArray } from './ConsList';
 import { betterError, ParseError, Parser, ParseResult, ParserOutput, resultOrError } from './ParserInterface';
 import { seq } from './SequencialParser';
 import { succ } from './TokenParser';
@@ -33,7 +34,7 @@ export function rep_sc<TKind, TResult>(p: Parser<TKind, TResult>): Parser<TKind,
     return {
         parse(token: Token<TKind> | undefined): ParserOutput<TKind, TResult[]> {
             let error: ParseError | undefined;
-            let result: ParseResult<TKind, TResult[]>[] = [{ firstToken: token, nextToken: token, result: [] }];
+            let result: ConsStep<TKind, TResult>[] = [{ firstToken: token, nextToken: token, node: undefined }];
 
             while (true) {
                 const steps = result;
@@ -48,7 +49,7 @@ export function rep_sc<TKind, TResult>(p: Parser<TKind, TResult>): Parser<TKind,
                                 result.push({
                                     firstToken: step.firstToken,
                                     nextToken: candidate.nextToken,
-                                    result: step.result.concat([candidate.result])
+                                    node: { value: candidate.result, prev: step.node }
                                 });
                             }
                         }
@@ -56,11 +57,16 @@ export function rep_sc<TKind, TResult>(p: Parser<TKind, TResult>): Parser<TKind,
                 }
 
                 if (result.length === 0) {
-                    result = steps;
-                    break;
+                    const finalCandidates: ParseResult<TKind, TResult[]>[] = steps.map(
+                        (step: ConsStep<TKind, TResult>): ParseResult<TKind, TResult[]> => ({
+                            firstToken: step.firstToken,
+                            nextToken: step.nextToken,
+                            result: toArray(step.node)
+                        })
+                    );
+                    return resultOrError(finalCandidates, error, true);
                 }
             }
-            return resultOrError(result, error, true);
         }
     };
 }
@@ -97,10 +103,10 @@ export function rep_n<TKind, TResult>(p: Parser<TKind, TResult>, count: number):
     return {
         parse(token: Token<TKind> | undefined): ParserOutput<TKind, TResult[]> {
             let error: ParseError | undefined;
-            let candidates: ParseResult<TKind, TResult[]>[] = [{ firstToken: token, nextToken: token, result: [] }];
+            let candidates: ConsStep<TKind, TResult>[] = [{ firstToken: token, nextToken: token, node: undefined }];
 
             for (let i = 0; i < count; i++) {
-                const newCandidates: ParseResult<TKind, TResult[]>[] = [];
+                const newCandidates: ConsStep<TKind, TResult>[] = [];
                 for (const step of candidates) {
                     const output = p.parse(step.nextToken);
                     error = betterError(error, output.error);
@@ -109,7 +115,7 @@ export function rep_n<TKind, TResult>(p: Parser<TKind, TResult>, count: number):
                             newCandidates.push({
                                 firstToken: step.firstToken,
                                 nextToken: candidate.nextToken,
-                                result: step.result.concat([candidate.result])
+                                node: { value: candidate.result, prev: step.node }
                             });
                         }
                     }
@@ -125,7 +131,14 @@ export function rep_n<TKind, TResult>(p: Parser<TKind, TResult>, count: number):
                 }
             }
 
-            return resultOrError(candidates, error, true);
+            const finalCandidates: ParseResult<TKind, TResult[]>[] = candidates.map(
+                (step: ConsStep<TKind, TResult>): ParseResult<TKind, TResult[]> => ({
+                    firstToken: step.firstToken,
+                    nextToken: step.nextToken,
+                    result: toArray(step.node)
+                })
+            );
+            return resultOrError(finalCandidates, error, true);
         }
     };
 }
