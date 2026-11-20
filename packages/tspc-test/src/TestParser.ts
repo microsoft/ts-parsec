@@ -108,6 +108,25 @@ test(`Parser: alt`, () => {
         assert.strictEqual(result[1].firstToken, firstToken);
         assert.strictEqual(result[1].nextToken, firstToken.next);
     }
+    {
+        const firstToken = notUndefined(lexer.parse(`123,456`));
+        const result = succeeded(
+            alt(
+                apply(tok(TokenKind.Number), (value: Token<TokenKind>) => `1:${value.text}`),
+                tok(TokenKind.Identifier),
+                apply(tok(TokenKind.Number), (value: Token<TokenKind>) => `2:${value.text}`),
+                apply(tok(TokenKind.Number), (value: Token<TokenKind>) => `3:${value.text}`)
+            ).parse(firstToken)
+        );
+        assert.deepStrictEqual(
+            result.map((candidate: parsec.ParseResult<TokenKind, string | Token<TokenKind>>) => candidate.result),
+            ['1:123', '2:123', '3:123']
+        );
+        for (const candidate of result) {
+            assert.strictEqual(candidate.firstToken, firstToken);
+            assert.strictEqual(candidate.nextToken, firstToken.next);
+        }
+    }
 });
 
 test(`Parser: alt_sc`, () => {
