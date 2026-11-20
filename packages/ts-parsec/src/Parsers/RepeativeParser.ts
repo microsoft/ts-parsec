@@ -103,10 +103,10 @@ export function rep_n<TKind, TResult>(p: Parser<TKind, TResult>, count: number):
     return {
         parse(token: Token<TKind> | undefined): ParserOutput<TKind, TResult[]> {
             let error: ParseError | undefined;
-            let candidates: ParseResult<TKind, TResult[]>[] = [{ firstToken: token, nextToken: token, result: [] }];
+            let candidates: ConsStep<TKind, TResult>[] = [{ firstToken: token, nextToken: token, node: undefined }];
 
             for (let i = 0; i < count; i++) {
-                const newCandidates: ParseResult<TKind, TResult[]>[] = [];
+                const newCandidates: ConsStep<TKind, TResult>[] = [];
                 for (const step of candidates) {
                     const output = p.parse(step.nextToken);
                     error = betterError(error, output.error);
@@ -115,7 +115,7 @@ export function rep_n<TKind, TResult>(p: Parser<TKind, TResult>, count: number):
                             newCandidates.push({
                                 firstToken: step.firstToken,
                                 nextToken: candidate.nextToken,
-                                result: step.result.concat([candidate.result])
+                                node: { value: candidate.result, prev: step.node }
                             });
                         }
                     }
@@ -131,7 +131,14 @@ export function rep_n<TKind, TResult>(p: Parser<TKind, TResult>, count: number):
                 }
             }
 
-            return resultOrError(candidates, error, true);
+            const finalCandidates: ParseResult<TKind, TResult[]>[] = candidates.map(
+                (step: ConsStep<TKind, TResult>): ParseResult<TKind, TResult[]> => ({
+                    firstToken: step.firstToken,
+                    nextToken: step.nextToken,
+                    result: toArray(step.node)
+                })
+            );
+            return resultOrError(finalCandidates, error, true);
         }
     };
 }
