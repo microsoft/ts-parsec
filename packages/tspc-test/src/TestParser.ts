@@ -259,6 +259,52 @@ test(`Parser: rep_sc`, () => {
         assert.strictEqual(result[0].firstToken, firstToken);
         assert.strictEqual(result[0].nextToken, firstToken);
     }
+    {
+        const result = succeeded(rep_sc(tok(TokenKind.Number)).parse(undefined));
+        assert.strictEqual(result.length, 1);
+        assert.deepStrictEqual(result[0].result, []);
+        assert.strictEqual(result[0].firstToken, undefined);
+        assert.strictEqual(result[0].nextToken, undefined);
+    }
+    {
+        const result = succeeded(rep_sc(opt_sc(tok(TokenKind.Number))).parse(firstToken));
+        assert.strictEqual(result.length, 1);
+        assert.deepStrictEqual(result[0].result.map((value: Token<TokenKind> | undefined) => value?.text), ['123', '456']);
+        assert.strictEqual(result[0].firstToken, firstToken);
+        assert.strictEqual(result[0].nextToken, undefined);
+    }
+    {
+        const ambiguous = alt(
+            apply(tok(TokenKind.Number), (value: Token<TokenKind>) => `a:${value.text}`),
+            apply(tok(TokenKind.Number), (value: Token<TokenKind>) => `b:${value.text}`)
+        );
+        const result = succeeded(rep_sc(ambiguous).parse(firstToken));
+        assert.strictEqual(result.length, 4);
+        assert.deepStrictEqual(
+            result.map((candidate: parsec.ParseResult<TokenKind, string[]>) => candidate.result),
+            [
+                ['a:123', 'a:456'],
+                ['a:123', 'b:456'],
+                ['b:123', 'a:456'],
+                ['b:123', 'b:456']
+            ]
+        );
+        for (const candidate of result) {
+            assert.strictEqual(candidate.firstToken, firstToken);
+            assert.strictEqual(candidate.nextToken, undefined);
+        }
+    }
+    {
+        const count = 10000;
+        const largeTokens = notUndefined(lexer.parse('1 '.repeat(count)));
+        const result = succeeded(rep_sc(tok(TokenKind.Number)).parse(largeTokens));
+        assert.strictEqual(result.length, 1);
+        assert.strictEqual(result[0].result.length, count);
+        assert.strictEqual(result[0].result[0].text, '1');
+        assert.strictEqual(result[0].result[count - 1].text, '1');
+        assert.strictEqual(result[0].firstToken, largeTokens);
+        assert.strictEqual(result[0].nextToken, undefined);
+    }
 });
 
 test(`Parser: repr`, () => {
